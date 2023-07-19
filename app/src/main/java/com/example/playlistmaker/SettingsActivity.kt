@@ -9,7 +9,7 @@ class SettingsActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val backArrowBtn = findViewById<ImageView>(R.id.back_arrow_btn)
+        val backArrowBtn = findViewById<ImageView>(R.id.iv_back_arrow_btn)
 
         backArrowBtn.setOnClickListener{
             finish()

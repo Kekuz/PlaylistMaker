@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 
 class MainActivity : AppCompatActivity() {
@@ -11,9 +12,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val searchBtn = findViewById<FrameLayout>(R.id.search_btn)
-        val mediaBtn = findViewById<FrameLayout>(R.id.media_btn)
-        val settingsBtn = findViewById<FrameLayout>(R.id.settings_btn)
+        val searchBtn = findViewById<Button>(R.id.search_btn)
+        val mediaBtn = findViewById<Button>(R.id.media_btn)
+        val settingsBtn = findViewById<Button>(R.id.settings_btn)
 
         val searchBtnClickListener: View.OnClickListener = object : View.OnClickListener{
             override fun onClick(v: View?) {

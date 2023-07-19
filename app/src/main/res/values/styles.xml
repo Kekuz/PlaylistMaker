@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="menu_bnt_style">
+        <item name="android:backgroundTint">@color/yp_white</item>
+        <item name="android:fontFamily">@font/ys_display</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
