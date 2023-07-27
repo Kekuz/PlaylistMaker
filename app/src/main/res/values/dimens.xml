@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="normal_text_size">24sp</dimen>
+    <dimen name="normal_text_size">22sp</dimen>
     <dimen name="little_text_size">16sp</dimen>
     <dimen name="settings_menu_layout_height">64dp</dimen>
     <dimen name="settings_list_tv_margin_start">16dp</dimen>

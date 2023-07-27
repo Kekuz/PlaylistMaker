@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yp_white"
+    style="@style/settings_background"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
 
@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="12dp"
-            android:src="@drawable/back_arrow_24" />
+            android:src="@drawable/back_arrow_24"
+            style="@style/settings_icon_color"/>
 
 
         <TextView
@@ -30,107 +31,77 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="12dp"
-            android:fontFamily="@font/ys_display"
+            android:fontFamily="@font/ys_display_medium"
             android:text="@string/settings"
-            android:textColor="@color/yp_black"
+            style="@style/settings_title_color"
             android:textSize="@dimen/normal_text_size" />
 
     </LinearLayout>
 
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_menu_layout_height"
-        android:layout_marginStart="@dimen/settings_list_tv_margin_start"
+        style="@style/settings_fl_list"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="6dp"
-        android:orientation="horizontal">
+        android:layout_marginEnd="6dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
-            android:text="@string/dark_theme"
-            android:textColor="@color/yp_black"
-            android:textSize="@dimen/little_text_size" />
+            style="@style/settings_tv_list"
+            android:text="@string/dark_theme" />
 
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+            style="@style/settings_switch_color"/>
 
     </FrameLayout>
 
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_menu_layout_height"
-        android:layout_marginStart="@dimen/settings_list_tv_margin_start"
-        android:layout_marginEnd="@dimen/settings_list_tv_margin_end"
-        android:orientation="horizontal">
+    <FrameLayout style="@style/settings_fl_list">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
-            android:text="@string/share_app"
-            android:textColor="@color/yp_black"
-            android:textSize="@dimen/little_text_size" />
+            style="@style/settings_tv_list"
+            android:text="@string/share_app" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/share_app_24" />
+            android:src="@drawable/share_app_24"
+            style="@style/settings_icon_color"/>
 
     </FrameLayout>
 
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_menu_layout_height"
-        android:layout_marginStart="@dimen/settings_list_tv_margin_start"
-        android:layout_marginEnd="@dimen/settings_list_tv_margin_end"
-        android:orientation="horizontal">
+    <FrameLayout style="@style/settings_fl_list">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
-            android:text="@string/write_to_support"
-            android:textColor="@color/yp_black"
-            android:textSize="@dimen/little_text_size" />
+            style="@style/settings_tv_list"
+            android:text="@string/write_to_support" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/write_to_support_24" />
+            android:src="@drawable/write_to_support_24"
+            style="@style/settings_icon_color"/>
 
     </FrameLayout>
 
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_menu_layout_height"
-        android:layout_marginStart="@dimen/settings_list_tv_margin_start"
-        android:layout_marginEnd="@dimen/settings_list_tv_margin_end"
-        android:orientation="horizontal">
+    <FrameLayout style="@style/settings_fl_list">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
-            android:text="@string/user_agreement"
-            android:textColor="@color/yp_black"
-            android:textSize="@dimen/little_text_size" />
+            style="@style/settings_tv_list"
+            android:text="@string/user_agreement" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/arrow_forward_24" />
+            android:src="@drawable/arrow_forward_24"
+            style="@style/settings_icon_color"/>
 
     </FrameLayout>
 
