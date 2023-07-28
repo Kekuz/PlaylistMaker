@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="menu_bnt_style" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">@color/yp_white</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/menu_btn_icon_padding</item>
+        <item name="iconTint">@color/yp_black</item>
+        <item name="cornerRadius">@dimen/menu_btn_corner_radius</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="menu_background">
+        <item name="android:background">@color/yp_blue</item>
+    </style>
+
+</resources>

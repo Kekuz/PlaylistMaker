@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/settings_background"
+    style="@style/background_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -17,7 +17,7 @@
 
         <ImageView
             android:id="@+id/iv_back_arrow_btn"
-            style="@style/settings_back_arrow_color"
+            style="@style/back_arrow_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/tvTitle"
-            style="@style/settings_title_color"
+            style="@style/title_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

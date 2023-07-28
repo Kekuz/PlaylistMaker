@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="search_field_style">
+        <item name="android:backgroundTint">@color/yp_light_gray</item>
+    </style>
+
+    <style name="search_field_icon_style">
+        <item name="tint">@color/yp_text_gray</item>
+    </style>
+
+    <style name="search_edit_text_style">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:hint">@string/search</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColorHint">@color/yp_text_gray</item>
+        <item name="android:textCursorDrawable">@drawable/color_cursor</item>
+        <item name="android:textSize">@dimen/little_text_size</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/yp_black</item>
+    </style>
+
+</resources>

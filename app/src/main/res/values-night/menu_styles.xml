@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <style name="menu_background">
+        <item name="android:background">@color/yp_black</item>
+    </style>
+
+</resources>
