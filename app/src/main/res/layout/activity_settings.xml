@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/settings_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/settings_background"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
 
@@ -17,23 +17,23 @@
 
         <ImageView
             android:id="@+id/iv_back_arrow_btn"
+            style="@style/settings_back_arrow_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="12dp"
-            android:src="@drawable/back_arrow_24"
-            style="@style/settings_icon_color"/>
+            android:src="@drawable/back_arrow_24" />
 
 
         <TextView
             android:id="@+id/tvTitle"
+            style="@style/settings_title_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/settings"
-            style="@style/settings_title_color"
             android:textSize="@dimen/normal_text_size" />
 
     </LinearLayout>
@@ -41,67 +41,73 @@
 
     <FrameLayout
         style="@style/settings_fl_list"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="6dp">
+        android:layout_marginTop="24dp">
 
         <TextView
             style="@style/settings_tv_list"
             android:text="@string/dark_theme" />
 
         <Switch
+            style="@style/settings_switch_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            tools:ignore="UseSwitchCompatOrMaterialXml"
-            style="@style/settings_switch_color"/>
+            android:layout_marginEnd="6dp"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     </FrameLayout>
 
 
-    <FrameLayout style="@style/settings_fl_list">
+    <FrameLayout
+        android:id="@+id/share_app_fl"
+        style="@style/settings_fl_list">
 
         <TextView
             style="@style/settings_tv_list"
             android:text="@string/share_app" />
 
         <ImageView
+            style="@style/settings_icon_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/share_app_24"
-            style="@style/settings_icon_color"/>
+            android:src="@drawable/share_app_24" />
 
     </FrameLayout>
 
 
-    <FrameLayout style="@style/settings_fl_list">
+    <FrameLayout
+        android:id="@+id/write_to_support_fl"
+        style="@style/settings_fl_list">
 
         <TextView
             style="@style/settings_tv_list"
             android:text="@string/write_to_support" />
 
         <ImageView
+            style="@style/settings_icon_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/write_to_support_24"
-            style="@style/settings_icon_color"/>
+            android:src="@drawable/write_to_support_24" />
 
     </FrameLayout>
 
 
-    <FrameLayout style="@style/settings_fl_list">
+    <FrameLayout
+        android:id="@+id/user_agreement_fl"
+        style="@style/settings_fl_list">
 
         <TextView
             style="@style/settings_tv_list"
             android:text="@string/user_agreement" />
 
         <ImageView
+            style="@style/settings_icon_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:src="@drawable/arrow_forward_24"
-            style="@style/settings_icon_color"/>
+            android:src="@drawable/arrow_forward_24" />
 
     </FrameLayout>
 
