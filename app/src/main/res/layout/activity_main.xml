@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/menu_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/menu_background"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -31,18 +31,30 @@
         <Button
             android:id="@+id/search_btn"
             style="@style/menu_bnt_style"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
             android:text="@string/search"
             app:icon="@drawable/search_icon_24" />
 
         <Button
             android:id="@+id/media_btn"
             style="@style/menu_bnt_style"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
             android:text="@string/media"
             app:icon="@drawable/media_icon_24" />
 
         <Button
             android:id="@+id/settings_btn"
             style="@style/menu_bnt_style"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
             android:text="@string/settings"
             app:icon="@drawable/settings_icon_24" />
 

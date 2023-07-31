@@ -12,10 +12,11 @@ import android.widget.EditText
 import android.widget.ImageView
 
 class SearchActivity : AppCompatActivity() {
-    companion object {
+    private companion object {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
-        var editTextData = ""
     }
+
+    private var editTextData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
