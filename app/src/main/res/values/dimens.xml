@@ -2,12 +2,14 @@
 <resources>
     <dimen name="normal_text_size">22sp</dimen>
     <dimen name="little_text_size">16sp</dimen>
-    <dimen name="settings_menu_layout_height">64dp</dimen>
+    <dimen name="tiny_text_size">11sp</dimen>
+    <dimen name="view_element_layout_height">64dp</dimen>
     <dimen name="margin_horizontal">16dp</dimen>
-    <dimen name="settings_list_tv_margin_end">12dp</dimen>
     <dimen name="menu_icon_margin_end">8dp</dimen>
     <dimen name="menu_btn_corner_radius">16dp</dimen>
     <dimen name="corner_radius">8dp</dimen>
     <dimen name="menu_btn_icon_padding">8dp</dimen>
+    <dimen name="views_between_distance">8dp</dimen>
+    <!-- <dimen name="track_icon_corner_radius">10</dimen> Чет оно не работает(-->
 
 </resources>
