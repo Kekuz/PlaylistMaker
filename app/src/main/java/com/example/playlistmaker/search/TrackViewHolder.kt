@@ -12,6 +12,10 @@ import com.example.playlistmaker.Track
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+    companion object{
+        private const val TRACK_ICON_CORNER_RADIUS = 10
+    }
+
     private val trackIcon: ImageView = itemView.findViewById(R.id.track_iv)
     private val trackName: TextView = itemView.findViewById(R.id.track_name)
     private val trackAuthor: TextView = itemView.findViewById(R.id.track_author)
@@ -24,7 +28,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackTime.text = model.trackTime
         Glide.with(itemView).load(model.artworkUrl100).placeholder(R.drawable.track_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(10))//Почему-то когда вставляешь из ресурсов, то иконка круглая, из px в dp тоже как-то так себе конвертируется
+            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))//Почему-то когда вставляешь из ресурсов, то иконка круглая, из px в dp тоже как-то так себе конвертируется
             .into(trackIcon)
     }
 

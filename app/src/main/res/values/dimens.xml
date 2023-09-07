@@ -13,6 +13,5 @@
     <dimen name="settings_list_margin_top">24dp</dimen>
     <dimen name="search_recycler_margin_top">16dp</dimen>
     <dimen name="track_author_max_length">128dp</dimen>
-    <!-- <dimen name="track_icon_corner_radius">10</dimen> Чет оно не работает(-->
 
 </resources>
