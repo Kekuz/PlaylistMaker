@@ -37,7 +37,7 @@
                 android:id="@+id/track_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="128dp"
+                android:maxWidth="@dimen/track_author_max_length"
                 tools:text="Исполнитель"
                 style="@style/search_track_author_style" />
 

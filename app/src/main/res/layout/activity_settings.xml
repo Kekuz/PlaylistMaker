@@ -43,7 +43,7 @@
         style="@style/settings_fl_list"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_element_layout_height"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/settings_list_margin_top"
         android:orientation="horizontal">
 
         <TextView

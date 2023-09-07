@@ -23,7 +23,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackAuthor.text = model.artistName
         trackTime.text = model.trackTime
         Glide.with(itemView).load(model.artworkUrl100).placeholder(R.drawable.track_placeholder)
-            .centerCrop().transform(RoundedCorners(10))//Почему-то когда вставляешь из ресурсов, то иконка круглая
+            .centerCrop()
+            .transform(RoundedCorners(10))//Почему-то когда вставляешь из ресурсов, то иконка круглая, из px в dp тоже как-то так себе конвертируется
             .into(trackIcon)
     }
 

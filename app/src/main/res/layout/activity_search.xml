@@ -82,7 +82,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/search_recycler_margin_top"
         android:id="@+id/track_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
