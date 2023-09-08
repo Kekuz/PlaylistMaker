@@ -1,15 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.search
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import com.example.playlistmaker.MocTrackList
+import com.example.playlistmaker.R
 
 class SearchActivity : AppCompatActivity() {
     private companion object {
@@ -29,6 +30,9 @@ class SearchActivity : AppCompatActivity() {
         val inputEditText = findViewById<EditText>(R.id.input_et)
         inputEditText.setText(editTextData)
 
+        val trackRV = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.track_rv)
+
+        trackRV.adapter = TrackAdapter(MocTrackList.trackList)
 
         backArrowBtn.setOnClickListener {
             finish()
@@ -40,6 +44,8 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+
+            inputEditText.clearFocus()
         }
 
         val simpleTextWatcher = object : TextWatcher {
