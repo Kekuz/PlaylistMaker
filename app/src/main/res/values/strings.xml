@@ -14,4 +14,8 @@
     <string name="support_email">anton.edlenko@yandex.ru</string>
     <string name="practicum_offer">https://yandex.ru/legal/practicum_offer/</string>
 
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="internet_problems">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh">Обновить</string>
+
 </resources>
