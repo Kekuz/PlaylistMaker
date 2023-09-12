@@ -81,11 +81,51 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="@dimen/search_recycler_margin_top"
-        android:id="@+id/track_rv"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/track_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <ImageView
+            android:id="@+id/error_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/search_picture_error_margin_top"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/track_rv"
+            app:layout_constraintStart_toStartOf="@+id/track_rv"
+            app:layout_constraintTop_toTopOf="@+id/track_rv"
+            tools:src="@drawable/not_found_icon" />
+
+        <TextView
+            android:id="@+id/error_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/search_error_text_margin_top"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/track_rv"
+            app:layout_constraintStart_toStartOf="@+id/track_rv"
+            app:layout_constraintTop_toBottomOf="@+id/error_iv"
+            tools:text="@string/nothing_found"
+            android:visibility="gone"
+            style="@style/search_error_text" />
+
+        <Button
+            android:id="@+id/error_btn"
+            style="@style/search_bnt_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/margin_top"
+            app:layout_constraintEnd_toEndOf="@+id/track_rv"
+            app:layout_constraintStart_toStartOf="@+id/track_rv"
+            app:layout_constraintTop_toBottomOf="@+id/error_tv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
