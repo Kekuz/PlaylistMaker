@@ -23,6 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
     private companion object {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
+        const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
         const val BASE_URL = "https://itunes.apple.com"
     }
 
@@ -30,7 +31,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorTV: TextView
     private lateinit var errorBtn: Button
     private lateinit var inputEditText: EditText
-    private var lastResponse: String = ""
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -40,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(iTunesAPI::class.java)
 
     private var editTextData = ""
+    private var lastResponse: String = ""
 
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter(tracks)
@@ -165,11 +166,14 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT_DATA, editTextData)
+        outState.putString(LAST_RESPONSE_DATA, lastResponse)
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         editTextData = savedInstanceState.getString(EDIT_TEXT_DATA, "")
+        lastResponse = savedInstanceState.getString(LAST_RESPONSE_DATA, "")
     }
 
 

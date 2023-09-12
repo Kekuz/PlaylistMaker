@@ -21,12 +21,13 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackName: TextView = itemView.findViewById(R.id.track_name)
     private val trackAuthor: TextView = itemView.findViewById(R.id.track_author)
     private val trackTime: TextView = itemView.findViewById(R.id.track_time)
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
 
     fun bind(model: Track) {
         trackName.text = model.trackName
         trackAuthor.text = model.artistName
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
+        trackTime.text = dateFormat.format(model.trackTimeMillis)
         Glide.with(itemView).load(model.artworkUrl100).placeholder(R.drawable.track_placeholder)
             .centerCrop()
             .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))//Почему-то когда вставляешь из ресурсов, то иконка круглая, из px в dp тоже как-то так себе конвертируется
