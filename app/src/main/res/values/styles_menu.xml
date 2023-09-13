@@ -8,7 +8,7 @@
         <item name="android:letterSpacing">0.04</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/yp_black</item>
-        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/menu_btn_icon_padding</item>

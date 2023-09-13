@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="title_color">
+    <style name="title_text_style">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textColor">@color/yp_black</item>
+    </style>
+
+    <style name="big_text_style">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
+    </style>
+
+    <style name="normal_text_style">
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
     <style name="back_arrow_color">

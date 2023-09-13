@@ -75,7 +75,14 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+        //ТЕСТИРУЮ
+        val storyRV = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.history_rv)
+        storyRV.adapter = TrackAdapter(listOf(
+            Track("Name","Artist", 1000,"",10),
+            Track("Name","Artist", 1000,"",10),
+            Track("Name","Artist", 1000,"",10),
 
+        ))
 
         backArrowBtn.setOnClickListener {
             finish()
