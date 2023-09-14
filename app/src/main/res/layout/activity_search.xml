@@ -128,9 +128,10 @@
             app:layout_constraintTop_toBottomOf="@+id/error_tv" />
 
         <ScrollView
+            android:id="@+id/history_sv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -150,11 +151,13 @@
                     android:id="@+id/history_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:reverseLayout="true">
 
                 </androidx.recyclerview.widget.RecyclerView>
 
                 <Button
+                    android:id="@+id/clear_history_btn"
                     style="@style/search_bnt"
                     android:layout_marginVertical="@dimen/margin_top"
                     android:layout_width="wrap_content"

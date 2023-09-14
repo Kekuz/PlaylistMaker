@@ -24,14 +24,18 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
 
-    fun bind(model: Track) {
+    fun bind(model: Track, listener: TrackAdapter.Listener) {
         trackName.text = model.trackName
         trackAuthor.text = model.artistName
         trackTime.text = dateFormat.format(model.trackTimeMillis)
         Glide.with(itemView).load(model.artworkUrl100).placeholder(R.drawable.track_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))//Почему-то когда вставляешь из ресурсов, то иконка круглая, из px в dp тоже как-то так себе конвертируется
+            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
             .into(trackIcon)
+
+        itemView.setOnClickListener{
+            listener.onClick(model)
+        }
     }
 
 }
