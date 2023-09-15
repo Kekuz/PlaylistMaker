@@ -52,8 +52,9 @@
             android:layout_marginStart="@dimen/margin_horizontal"
             android:text="@string/dark_theme" />
 
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
             style="@style/settings_switch_color"
+            android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"

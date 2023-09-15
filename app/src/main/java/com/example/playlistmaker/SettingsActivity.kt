@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.playlistmaker.App.Companion.NIGHT_MODE
+import com.example.playlistmaker.App.Companion.darkTheme
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +19,17 @@ class SettingsActivity : AppCompatActivity() {
         val shareAppBtn = findViewById<FrameLayout>(R.id.share_app_fl)
         val writeToSupportBtn = findViewById<FrameLayout>(R.id.write_to_support_fl)
         val userAgreementBtn = findViewById<FrameLayout>(R.id.user_agreement_fl)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
+
+        themeSwitcher.isChecked = darkTheme
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            sharedPrefs.edit()
+                .putString(NIGHT_MODE, checked.toString())
+                .apply()
+        }
 
         backArrowBtn.setOnClickListener {
             finish()
