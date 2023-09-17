@@ -8,13 +8,9 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ScrollView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,6 +26,7 @@ class SearchActivity : AppCompatActivity() {
         const val REQUEST_SUCCEEDED = 200
         const val ERROR_RESPONSE_NOT_FOUND = 404
     }
+    private lateinit var binding: ActivitySearchBinding
 
     private val sharedPrefs by lazy {
         getSharedPreferences(
@@ -45,12 +42,6 @@ class SearchActivity : AppCompatActivity() {
             historyAdapter.notifyDataSetChanged()
         }
 
-    private lateinit var errorIV: ImageView
-    private lateinit var errorTV: TextView
-    private lateinit var errorBtn: Button
-    private lateinit var inputEditText: EditText
-
-    private lateinit var historySV: ScrollView
 
     private lateinit var historyAdapter: TrackAdapter
 
@@ -69,73 +60,57 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-
-        val backArrowBtn = findViewById<ImageView>(R.id.iv_back_arrow_btn)
-        val clearButton = findViewById<ImageView>(R.id.clear_iv)
-
-        errorIV = findViewById(R.id.error_iv)
-        errorTV = findViewById(R.id.error_tv)
-        errorBtn = findViewById(R.id.error_btn)
-
-
-        val historyRV = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.history_rv)
         historyAdapter = TrackAdapter(searchHistory.tracks, onClick)
-        historyRV.adapter = historyAdapter
+        binding.historyRv.adapter = historyAdapter
 
-        val clearHistoryBtn = findViewById<Button>(R.id.clear_history_btn)
-        clearHistoryBtn.setOnClickListener {
+        binding.clearHistoryBtn.setOnClickListener {
             searchHistory.clear()
-            historySV.isVisible = false
+            binding.historySv.isVisible = false
         }
 
-        errorBtn.setOnClickListener {
+
+        binding.errorBtn.setOnClickListener {
             doResponse(lastResponse)
         }
 
-        inputEditText = findViewById(R.id.input_et)
-        inputEditText.setText(editTextData)
+        binding.trackRv.adapter = trackAdapter
 
-
-        val trackRV = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.track_rv)
-        trackRV.adapter = trackAdapter
-
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                doResponse(inputEditText.text.toString())
+                doResponse(binding.inputEt.text.toString())
                 true
             }
             false
         }
 
-        historySV = findViewById(R.id.history_sv)
-
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            historySV.visibility =
-                if (hasFocus && inputEditText.text.isEmpty() && searchHistory.tracks.isNotEmpty())
+        binding.inputEt.setOnFocusChangeListener { _, hasFocus ->
+            binding.historySv.visibility =
+                if (hasFocus && binding.inputEt.text.isEmpty() && searchHistory.tracks.isNotEmpty())
                     View.VISIBLE
                 else
                     View.GONE
         }
 
-        backArrowBtn.setOnClickListener {
+        binding.ivBackArrowBtn.setOnClickListener {
             finish()
         }
 
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
+        binding.clearIv.setOnClickListener {
+            binding.inputEt.setText("")
             tracks.clear()
             trackAdapter.notifyDataSetChanged()
-            errorIV.isVisible = false
-            errorTV.isVisible = false
-            errorBtn.isVisible = false
+            binding.errorIv.isVisible = false
+            binding.errorTv.isVisible = false
+            binding.errorBtn.isVisible = false
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
 
-            inputEditText.clearFocus()
+            binding.inputEt.clearFocus()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -144,19 +119,19 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                binding.clearIv.visibility = clearButtonVisibility(s)
                 editTextData = s.toString()
 
-                if (inputEditText.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()) {
-                    historySV.isVisible = true
+                if (binding.inputEt.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()) {
+                    binding.historySv.isVisible = true
 
-                    errorIV.isVisible = false
-                    errorTV.isVisible = false
-                    errorBtn.isVisible = false
+                    binding.errorIv.isVisible = false
+                    binding.errorTv.isVisible = false
+                    binding.errorBtn.isVisible = false
                     tracks.clear()
                     trackAdapter.notifyDataSetChanged()
                 } else
-                    historySV.isVisible = false
+                    binding.historySv.isVisible = false
 
             }
 
@@ -165,12 +140,12 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.inputEt.addTextChangedListener(simpleTextWatcher)
 
     }
 
     private fun doResponse(text: String) {
-        if (inputEditText.text.isNotEmpty()) {
+        if (binding.inputEt.text.isNotEmpty()) {
             iTunesService.search(text).enqueue(object :
                 Callback<TrackResponse> {
                 override fun onResponse(
@@ -180,9 +155,9 @@ class SearchActivity : AppCompatActivity() {
                     if (response.code() == REQUEST_SUCCEEDED) {
                         tracks.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
-                            errorIV.isVisible = false
-                            errorTV.isVisible = false
-                            errorBtn.isVisible = false
+                            binding.errorIv.isVisible = false
+                            binding.errorTv.isVisible = false
+                            binding.errorBtn.isVisible = false
                             tracks.addAll(response.body()?.results!!)
                             trackAdapter.notifyDataSetChanged()
                         } else if (tracks.isEmpty()) {
@@ -207,15 +182,15 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showErrorPictureAndText(text: String) {
         if (text == getString(R.string.nothing_found)) {
-            errorIV.setBackgroundResource(R.drawable.not_found_icon)
-            errorTV.text = getString(R.string.nothing_found)
+            binding.errorIv.setBackgroundResource(R.drawable.not_found_icon)
+            binding.errorTv.text = getString(R.string.nothing_found)
         } else if (text == getString(R.string.internet_problems)) {
-            errorIV.setBackgroundResource(R.drawable.internet_problem_icon)
-            errorTV.text = getString(R.string.internet_problems)
-            errorBtn.isVisible = true
+            binding.errorIv.setBackgroundResource(R.drawable.internet_problem_icon)
+            binding.errorTv.text = getString(R.string.internet_problems)
+            binding.errorBtn.isVisible = true
         }
-        errorIV.isVisible = true
-        errorTV.isVisible = true
+        binding.errorIv.isVisible = true
+        binding.errorTv.isVisible = true
         tracks.clear()
         trackAdapter.notifyDataSetChanged()
     }
@@ -231,6 +206,8 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         editTextData = savedInstanceState.getString(EDIT_TEXT_DATA, "")
         lastResponse = savedInstanceState.getString(LAST_RESPONSE_DATA, "")
+        binding.inputEt.setText(editTextData)
+        doResponse(editTextData)
     }
 
 
