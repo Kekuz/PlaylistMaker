@@ -24,7 +24,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
 
-    fun bind(model: Track, listener: TrackAdapter.Listener) {
+    fun bind(model: Track, onClick: (Track) -> Unit) {
         trackName.text = model.trackName
         trackAuthor.text = model.artistName
         trackTime.text = dateFormat.format(model.trackTimeMillis)
@@ -34,7 +34,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(trackIcon)
 
         itemView.setOnClickListener{
-            listener.onClick(model)
+            onClick.invoke(model)
         }
     }
 

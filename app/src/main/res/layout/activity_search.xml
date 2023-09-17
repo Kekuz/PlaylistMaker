@@ -107,9 +107,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/search_error_text_margin_top"
+            android:gravity="center"
             android:paddingHorizontal="@dimen/margin_horizontal"
             android:visibility="gone"
-            android:gravity="center"
             app:layout_constraintEnd_toEndOf="@+id/track_rv"
             app:layout_constraintStart_toStartOf="@+id/track_rv"
             app:layout_constraintTop_toBottomOf="@+id/error_iv"
@@ -118,10 +118,10 @@
         <Button
             android:id="@+id/error_btn"
             style="@style/search_bnt"
-            android:text="@string/refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_top"
+            android:text="@string/refresh"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/track_rv"
             app:layout_constraintStart_toStartOf="@+id/track_rv"
@@ -143,8 +143,7 @@
                     style="@style/big_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="18dp"
-                    android:paddingBottom="12dp"
+                    android:layout_marginVertical="@dimen/margin_top"
                     android:text="@string/you_were_looking_for" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -152,17 +151,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:reverseLayout="true">
+                    app:reverseLayout="true"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/track_view">
 
                 </androidx.recyclerview.widget.RecyclerView>
 
                 <Button
                     android:id="@+id/clear_history_btn"
                     style="@style/search_bnt"
-                    android:layout_marginVertical="@dimen/margin_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/clear_history"/>
+                    android:layout_marginVertical="@dimen/margin_top"
+                    android:text="@string/clear_history" />
 
             </LinearLayout>
         </ScrollView>

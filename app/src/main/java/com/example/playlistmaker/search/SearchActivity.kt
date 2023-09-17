@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.example.playlistmaker.R
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,21 +21,29 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
+class SearchActivity : AppCompatActivity() {
     private companion object {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
         const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
         const val BASE_URL = "https://itunes.apple.com"
         const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
+        const val REQUEST_SUCCEEDED = 200
+        const val ERROR_RESPONSE_NOT_FOUND = 404
     }
 
-    private val sharedPrefs by lazy {getSharedPreferences(HISTORY_SHARED_PREFERENCES, MODE_PRIVATE)}
-    private val searchHistory by lazy { SearchHistory(sharedPrefs)}
-
-    override fun onClick(track: Track) {
-        searchHistory.add(track)
-        historyAdapter.notifyDataSetChanged()
+    private val sharedPrefs by lazy {
+        getSharedPreferences(
+            HISTORY_SHARED_PREFERENCES,
+            MODE_PRIVATE
+        )
     }
+    private val searchHistory by lazy { SearchHistory(sharedPrefs) }
+
+    private val onClick: (Track) -> Unit =
+        {
+            searchHistory.add(it)
+            historyAdapter.notifyDataSetChanged()
+        }
 
     private lateinit var errorIV: ImageView
     private lateinit var errorTV: TextView
@@ -56,7 +65,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private var lastResponse: String = ""
 
     private val tracks = ArrayList<Track>()
-    private val trackAdapter = TrackAdapter(tracks, this)
+    private val trackAdapter = TrackAdapter(tracks, onClick)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,13 +81,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
 
         val historyRV = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.history_rv)
-        historyAdapter = TrackAdapter(searchHistory.tracks,this)
+        historyAdapter = TrackAdapter(searchHistory.tracks, onClick)
         historyRV.adapter = historyAdapter
 
         val clearHistoryBtn = findViewById<Button>(R.id.clear_history_btn)
         clearHistoryBtn.setOnClickListener {
             searchHistory.clear()
-            historySV.visibility = View.GONE
+            historySV.isVisible = false
         }
 
         errorBtn.setOnClickListener {
@@ -104,7 +113,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             historySV.visibility =
-                if (hasFocus && inputEditText.text.isEmpty() && searchHistory.tracks.isNotEmpty()) View.VISIBLE else View.GONE
+                if (hasFocus && inputEditText.text.isEmpty() && searchHistory.tracks.isNotEmpty())
+                    View.VISIBLE
+                else
+                    View.GONE
         }
 
         backArrowBtn.setOnClickListener {
@@ -115,9 +127,9 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
             inputEditText.setText("")
             tracks.clear()
             trackAdapter.notifyDataSetChanged()
-            errorIV.visibility = View.GONE
-            errorTV.visibility = View.GONE
-            errorBtn.visibility = View.GONE
+            errorIV.isVisible = false
+            errorTV.isVisible = false
+            errorBtn.isVisible = false
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -135,16 +147,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
                 clearButton.visibility = clearButtonVisibility(s)
                 editTextData = s.toString()
 
-                if (inputEditText.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()){
-                    historySV.visibility = View.VISIBLE
+                if (inputEditText.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()) {
+                    historySV.isVisible = true
 
-                    errorIV.visibility = View.GONE
-                    errorTV.visibility = View.GONE
-                    errorBtn.visibility = View.GONE
+                    errorIV.isVisible = false
+                    errorTV.isVisible = false
+                    errorBtn.isVisible = false
                     tracks.clear()
                     trackAdapter.notifyDataSetChanged()
-                }else
-                    historySV.visibility = View.GONE
+                } else
+                    historySV.isVisible = false
 
             }
 
@@ -165,18 +177,18 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    if (response.code() == 200) {
+                    if (response.code() == REQUEST_SUCCEEDED) {
                         tracks.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
-                            errorIV.visibility = View.GONE
-                            errorTV.visibility = View.GONE
-                            errorBtn.visibility = View.GONE
+                            errorIV.isVisible = false
+                            errorTV.isVisible = false
+                            errorBtn.isVisible = false
                             tracks.addAll(response.body()?.results!!)
                             trackAdapter.notifyDataSetChanged()
                         } else if (tracks.isEmpty()) {
                             showErrorPictureAndText(getString(R.string.nothing_found))
                         }
-                    } else if (response.code() == 404) {
+                    } else if (response.code() == ERROR_RESPONSE_NOT_FOUND) {
                         showErrorPictureAndText(getString(R.string.nothing_found))
                     } else {
                         showErrorPictureAndText(getString(R.string.internet_problems))
@@ -200,10 +212,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
         } else if (text == getString(R.string.internet_problems)) {
             errorIV.setBackgroundResource(R.drawable.internet_problem_icon)
             errorTV.text = getString(R.string.internet_problems)
-            errorBtn.visibility = View.VISIBLE
+            errorBtn.isVisible = true
         }
-        errorIV.visibility = View.VISIBLE
-        errorTV.visibility = View.VISIBLE
+        errorIV.isVisible = true
+        errorTV.isVisible = true
         tracks.clear()
         trackAdapter.notifyDataSetChanged()
     }
