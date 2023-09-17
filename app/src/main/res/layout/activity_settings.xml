@@ -27,14 +27,12 @@
 
         <TextView
             android:id="@+id/tvTitle"
-            style="@style/title_color"
+            style="@style/title_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="12dp"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/settings"
-            android:textSize="@dimen/normal_text_size" />
+            android:text="@string/settings" />
 
     </LinearLayout>
 
@@ -47,15 +45,16 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/settings_tv_list"
+            style="@style/normal_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:layout_marginStart="@dimen/margin_horizontal"
             android:text="@string/dark_theme" />
 
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
             style="@style/settings_switch_color"
+            android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
@@ -73,7 +72,7 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/settings_tv_list"
+            style="@style/normal_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
@@ -99,7 +98,7 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/settings_tv_list"
+            style="@style/normal_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
@@ -125,7 +124,7 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/settings_tv_list"
+            style="@style/normal_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"

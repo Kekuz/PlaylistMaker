@@ -26,14 +26,12 @@
 
         <TextView
             android:id="@+id/tvTitle"
-            style="@style/title_color"
+            style="@style/title_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="12dp"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/search"
-            android:textSize="@dimen/normal_text_size" />
+            android:text="@string/search" />
 
     </LinearLayout>
 
@@ -83,13 +81,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_top">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/track_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ImageView
             android:id="@+id/error_iv"
@@ -104,27 +103,70 @@
 
         <TextView
             android:id="@+id/error_tv"
+            style="@style/big_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/search_error_text_margin_top"
+            android:gravity="center"
             android:paddingHorizontal="@dimen/margin_horizontal"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/track_rv"
             app:layout_constraintStart_toStartOf="@+id/track_rv"
             app:layout_constraintTop_toBottomOf="@+id/error_iv"
-            tools:text="@string/nothing_found"
-            android:visibility="gone"
-            style="@style/search_error_text" />
+            tools:text="@string/nothing_found" />
 
         <Button
             android:id="@+id/error_btn"
-            style="@style/search_bnt_error"
+            style="@style/search_bnt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/margin_top"
+            android:text="@string/refresh"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/track_rv"
             app:layout_constraintStart_toStartOf="@+id/track_rv"
             app:layout_constraintTop_toBottomOf="@+id/error_tv" />
+
+        <ScrollView
+            android:id="@+id/history_sv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|top"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/big_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_top"
+                    android:text="@string/you_were_looking_for" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/history_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:reverseLayout="true"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/track_view">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+                <Button
+                    android:id="@+id/clear_history_btn"
+                    style="@style/search_bnt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_top"
+                    android:text="@string/clear_history" />
+
+            </LinearLayout>
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
