@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="audio_info_text_style">
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/audio_info_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <style name="audio_info_text_style_gray">
+        <item name="android:textColor">@color/yp_text_gray</item>
+        <item name="android:textSize">@dimen/audio_info_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+</resources>

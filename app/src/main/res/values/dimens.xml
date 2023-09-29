@@ -4,6 +4,7 @@
     <dimen name="big_text_size">22sp</dimen>
     <dimen name="normal_text_size">19sp</dimen>
     <dimen name="little_text_size">16sp</dimen>
+    <dimen name="audio_info_text_size">15sp</dimen>
     <dimen name="tiny_text_size">13sp</dimen>
 
     <dimen name="view_element_layout_height">64dp</dimen>
@@ -17,7 +18,12 @@
     <dimen name="margin_top">24dp</dimen>
     <dimen name="search_recycler_margin_top">16dp</dimen>
     <dimen name="search_error_text_margin_top">16dp</dimen>
+
     <dimen name="track_author_max_length">128dp</dimen>
     <dimen name="search_picture_error_margin_top">104dp</dimen>
+
+    <dimen name="audio_player_back_arrow_padding">16dp</dimen>
+    <dimen name="audio_little_button">51dp</dimen>
+    <dimen name="audio_big_button">100dp</dimen>
 
 </resources>
