@@ -17,10 +17,6 @@ import java.util.Locale
 class AudioPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
 
-    companion object {
-        private const val TRACK_ICON_CORNER_RADIUS = 30
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -40,8 +36,8 @@ class AudioPlayer : AppCompatActivity() {
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
         //В задании написано: "Показывать название альбома (collectionName) (если есть)"
-        //iTunes при отсутствии албома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
-        if (track.collectionName.endsWith(" - Single")) {
+        //iTunes при отсутствии альбома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
+        if (track.collectionName.endsWith(NO_ALBUM_SUBSTRING)) {
             binding.albumGroup.isVisible = false
         } else {
             binding.albumValueTv.text = track.collectionName
@@ -59,5 +55,10 @@ class AudioPlayer : AppCompatActivity() {
             .centerCrop()
             .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
             .into(binding.artworkUrl100)
+    }
+
+    companion object {
+        private const val TRACK_ICON_CORNER_RADIUS = 30
+        private const val NO_ALBUM_SUBSTRING = " - Single"
     }
 }
