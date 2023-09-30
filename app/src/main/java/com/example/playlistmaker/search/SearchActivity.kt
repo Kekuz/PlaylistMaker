@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -9,8 +10,10 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import com.example.playlistmaker.AudioPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +42,9 @@ class SearchActivity : AppCompatActivity() {
     private val onClick: (Track) -> Unit =
         {
             searchHistory.add(it)
+            val intent = Intent(this, AudioPlayer::class.java)
+            intent.putExtra("track", Gson().toJson(it))
+            startActivity(intent)
             historyAdapter.notifyDataSetChanged()
         }
 
