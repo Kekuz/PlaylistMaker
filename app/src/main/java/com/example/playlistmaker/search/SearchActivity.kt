@@ -13,7 +13,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import com.example.playlistmaker.AudioPlayer
+import com.example.playlistmaker.audioplayer.AudioPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.google.gson.Gson
