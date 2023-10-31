@@ -28,10 +28,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
 
     private val searchRunnable = Runnable {
-        val response = binding.inputEt.text.toString()
-        if(response != "") {
-            doResponse(response)
-            Log.e("Debounce send response", response)
+        val requestText = binding.inputEt.text.toString()
+        if(requestText.isNotEmpty()) {
+            doResponse(requestText)
+            Log.d("Debounce send response", requestText)
         }
     }
     private val handler = Handler(Looper.getMainLooper())
@@ -96,6 +96,7 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 doResponse(binding.inputEt.text.toString())
+                handler.removeCallbacks(searchRunnable)
                 val inputMethodManager =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)

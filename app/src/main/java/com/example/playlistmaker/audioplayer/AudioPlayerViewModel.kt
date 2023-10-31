@@ -4,17 +4,21 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.R
 import com.example.playlistmaker.search.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerViewModel(val track: Track) : ViewModel() {
 
-    val currentTimeLiveData = MutableLiveData<String>()
-    val playButtonIsEnabledLiveData = MutableLiveData<Boolean>()
-    val playButtonImageLiveData = MutableLiveData<Int>()
+    private val _currentTimeLiveData = MutableLiveData<String>()
+    private val _playButtonImageLiveData = MutableLiveData<Int>()
+
+    val currentTimeLiveData: LiveData<String> = _currentTimeLiveData
+    val playButtonImageLiveData: LiveData<Int> = _playButtonImageLiveData
 
     val trackTimeFormat: String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
     val artworkUrl512 = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
@@ -26,8 +30,7 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
 
     init {
         preparePlayer()
-        Log.e("Track info", track.toString())
-        playButtonIsEnabledLiveData.value = false
+        Log.d("Track info", track.toString())
     }
 
     override fun onCleared() {
@@ -38,9 +41,9 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
     private val trackTimerRunnable = object : Runnable {
         override fun run() {
             if (playerState == STATE_PLAYING) {
-                currentTimeLiveData.value = dateFormat.format(mediaPlayer.currentPosition)
+                _currentTimeLiveData.value = dateFormat.format(mediaPlayer.currentPosition)
                 handler.postDelayed(this, TIMER_REFRESH_DELAY)
-                Log.e("Timer", mediaPlayer.currentPosition.toString())
+                Log.d("Timer", mediaPlayer.currentPosition.toString())
             }
         }
     }
@@ -49,26 +52,25 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playButtonIsEnabledLiveData.value = true
             playerState = STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
-            playButtonImageLiveData.value = IMAGE_BUTTON_STATE_PLAY
+            _playButtonImageLiveData.value = R.drawable.audio_player_play_button
             playerState = STATE_PREPARED
-            currentTimeLiveData.value = CURRENT_TIME_ZERO
+            _currentTimeLiveData.value = CURRENT_TIME_ZERO
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playButtonImageLiveData.value = IMAGE_BUTTON_STATE_PAUSE
+        _playButtonImageLiveData.value = R.drawable.audio_player_pause_button
         playerState = STATE_PLAYING
         trackTimerRunnable.run()
     }
 
     fun pausePlayer() {
         mediaPlayer.pause()
-        playButtonImageLiveData.value = IMAGE_BUTTON_STATE_PLAY
+        _playButtonImageLiveData.value = R.drawable.audio_player_play_button
         playerState = STATE_PAUSED
         handler.removeCallbacks(trackTimerRunnable)
     }
@@ -76,12 +78,12 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
     fun playbackControl() {
         when (playerState) {
             STATE_PLAYING -> {
-                Log.e("State", "pause")
+                Log.d("State", "pause")
                 pausePlayer()
             }
 
             STATE_PREPARED, STATE_PAUSED -> {
-                Log.e("State", "play")
+                Log.d("State", "play")
                 startPlayer()
             }
         }
@@ -95,10 +97,7 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
-        const val IMAGE_BUTTON_STATE_PLAY = 0
-        const val IMAGE_BUTTON_STATE_PAUSE = 1
-
-        const val CURRENT_TIME_ZERO = "zero"
+        const val CURRENT_TIME_ZERO = "0:00"
     }
 
 
