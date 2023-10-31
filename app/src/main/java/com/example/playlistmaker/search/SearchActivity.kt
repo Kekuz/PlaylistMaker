@@ -4,13 +4,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import com.example.playlistmaker.AudioPlayer
+import com.example.playlistmaker.audioplayer.AudioPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.google.gson.Gson
@@ -21,15 +24,18 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    private companion object {
-        const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
-        const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
-        const val BASE_URL = "https://itunes.apple.com"
-        const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
-        const val REQUEST_SUCCEEDED = 200
-        const val ERROR_RESPONSE_NOT_FOUND = 404
-    }
+
     private lateinit var binding: ActivitySearchBinding
+
+    private val searchRunnable = Runnable {
+        val requestText = binding.inputEt.text.toString()
+        if(requestText.isNotEmpty()) {
+            doResponse(requestText)
+            Log.d("Debounce send response", requestText)
+        }
+    }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
 
     private val sharedPrefs by lazy {
         getSharedPreferences(
@@ -41,11 +47,14 @@ class SearchActivity : AppCompatActivity() {
 
     private val onClick: (Track) -> Unit =
         {
-            searchHistory.add(it)
-            val intent = Intent(this, AudioPlayer::class.java)
-            intent.putExtra("track", Gson().toJson(it))
-            startActivity(intent)
-            historyAdapter.notifyDataSetChanged()
+            if (clickDebounce()){
+                searchHistory.add(it)
+                val intent = Intent(this, AudioPlayer::class.java)
+                intent.putExtra("track", Gson().toJson(it))
+                startActivity(intent)
+                historyAdapter.notifyDataSetChanged()
+            }
+
         }
 
 
@@ -85,8 +94,12 @@ class SearchActivity : AppCompatActivity() {
         binding.trackRv.adapter = trackAdapter
 
         binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 doResponse(binding.inputEt.text.toString())
+                handler.removeCallbacks(searchRunnable)
+                val inputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
                 true
             }
             false
@@ -127,6 +140,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIv.visibility = clearButtonVisibility(s)
                 editTextData = s.toString()
+                searchDebounce()
 
                 if (binding.inputEt.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()) {
                     binding.historySv.isVisible = true
@@ -152,6 +166,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun doResponse(text: String) {
         if (binding.inputEt.text.isNotEmpty()) {
+            binding.searchPb.isVisible = true
             iTunesService.search(text).enqueue(object :
                 Callback<TrackResponse> {
                 override fun onResponse(
@@ -175,6 +190,7 @@ class SearchActivity : AppCompatActivity() {
                         showErrorPictureAndText(getString(R.string.internet_problems))
                         lastResponse = text
                     }
+                    binding.searchPb.isVisible = false
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
@@ -223,5 +239,30 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private companion object {
+        const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
+        const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
+        const val BASE_URL = "https://itunes.apple.com"
+        const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
+        const val REQUEST_SUCCEEDED = 200
+        const val ERROR_RESPONSE_NOT_FOUND = 404
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

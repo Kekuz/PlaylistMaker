@@ -16,7 +16,7 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".AudioPlayer"
+            android:name=".audioplayer.AudioPlayer"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
