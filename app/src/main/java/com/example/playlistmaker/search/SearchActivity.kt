@@ -178,7 +178,6 @@ class SearchActivity : AppCompatActivity() {
                             binding.errorIv.isVisible = false
                             binding.errorTv.isVisible = false
                             binding.errorBtn.isVisible = false
-                            binding.searchPb.isVisible = false
                             tracks.addAll(response.body()?.results!!)
                             trackAdapter.notifyDataSetChanged()
                         } else if (tracks.isEmpty()) {
@@ -190,6 +189,7 @@ class SearchActivity : AppCompatActivity() {
                         showErrorPictureAndText(getString(R.string.internet_problems))
                         lastResponse = text
                     }
+                    binding.searchPb.isVisible = false
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
