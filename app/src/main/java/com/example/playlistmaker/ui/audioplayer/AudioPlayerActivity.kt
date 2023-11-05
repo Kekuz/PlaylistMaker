@@ -1,4 +1,4 @@
-package com.example.playlistmaker.audioplayer
+package com.example.playlistmaker.ui.audioplayer
 
 
 import android.os.Bundle
@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.audioplayer.AudioPlayerViewModel
+import com.example.playlistmaker.presentation.audioplayer.TrackFactory
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 
 
-class AudioPlayer : AppCompatActivity() {
+class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var viewModel: AudioPlayerViewModel
 
@@ -34,7 +36,7 @@ class AudioPlayer : AppCompatActivity() {
     }
 
 
-    private fun bindViews(){
+    private fun bindViews() {
         with(binding) {
             playButton.setOnClickListener {
                 viewModel.playbackControl()
@@ -46,7 +48,7 @@ class AudioPlayer : AppCompatActivity() {
 
             nameTv.text = viewModel.track.trackName
             authorTv.text = viewModel.track.artistName
-            trackTimeValueTv.text = viewModel.trackTimeFormat
+            trackTimeValueTv.text = viewModel.track.trackTime
 
             //В задании написано: "Показывать название альбома (collectionName) (если есть)"
             //iTunes при отсутствии альбома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
@@ -55,13 +57,13 @@ class AudioPlayer : AppCompatActivity() {
             } else {
                 albumValueTv.text = viewModel.track.collectionName
             }
-            yearValueTv.text = viewModel.track.releaseDate.substringBefore('-')
+            yearValueTv.text = viewModel.track.releaseYear
             genreValueTv.text = viewModel.track.primaryGenreName
             countryValueTv.text = viewModel.track.country
         }
 
         Glide.with(this)
-            .load(viewModel.artworkUrl512)
+            .load(viewModel.track.artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
             .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
@@ -69,17 +71,17 @@ class AudioPlayer : AppCompatActivity() {
 
     }
 
-    private fun addObservers(){
-        with(viewModel) {
-            currentTimeLiveData.observe(this@AudioPlayer) {
-                binding.currentTimeTv.text = it
-            }
+    private fun addObservers() = with(viewModel) {
 
-            playButtonImageLiveData.observe(this@AudioPlayer) {
-                binding.playButton.setImageResource(it)
-            }
+        currentTimeLiveData.observe(this@AudioPlayerActivity) {
+            binding.currentTimeTv.text = it
+        }
+
+        playButtonImageLiveData.observe(this@AudioPlayerActivity) {
+            binding.playButton.setImageResource(it)
         }
     }
+
     companion object {
         private const val TRACK_ICON_CORNER_RADIUS = 30
         private const val NO_ALBUM_SUBSTRING = " - Single"

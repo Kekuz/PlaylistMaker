@@ -1,4 +1,4 @@
-package com.example.playlistmaker.audioplayer
+package com.example.playlistmaker.presentation.audioplayer
 
 import android.media.MediaPlayer
 import android.os.Handler
@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.Track
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -20,8 +20,6 @@ class AudioPlayerViewModel(val track: Track) : ViewModel() {
     val currentTimeLiveData: LiveData<String> = _currentTimeLiveData
     val playButtonImageLiveData: LiveData<Int> = _playButtonImageLiveData
 
-    val trackTimeFormat: String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
-    val artworkUrl512 = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     private val mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -13,15 +13,13 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import com.example.playlistmaker.audioplayer.AudioPlayer
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.TrackInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -29,10 +27,9 @@ class SearchActivity : AppCompatActivity() {
 
     private val searchRunnable = Runnable {
         val requestText = binding.inputEt.text.toString()
-        if(requestText.isNotEmpty()) {
-            doResponse(requestText)
-            Log.d("Debounce send response", requestText)
-        }
+        doRequest(requestText)
+        Log.d("Debounce send response", requestText)
+
     }
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
@@ -47,9 +44,9 @@ class SearchActivity : AppCompatActivity() {
 
     private val onClick: (Track) -> Unit =
         {
-            if (clickDebounce()){
+            if (clickDebounce()) {
                 searchHistory.add(it)
-                val intent = Intent(this, AudioPlayer::class.java)
+                val intent = Intent(this, AudioPlayerActivity::class.java)
                 intent.putExtra("track", Gson().toJson(it))
                 startActivity(intent)
                 historyAdapter.notifyDataSetChanged()
@@ -60,12 +57,6 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var historyAdapter: TrackAdapter
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(iTunesAPI::class.java)
 
     private var editTextData = ""
     private var lastResponse: String = ""
@@ -88,14 +79,14 @@ class SearchActivity : AppCompatActivity() {
 
 
         binding.errorBtn.setOnClickListener {
-            doResponse(lastResponse)
+            doRequest(lastResponse)
         }
 
         binding.trackRv.adapter = trackAdapter
 
         binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                doResponse(binding.inputEt.text.toString())
+                doRequest(binding.inputEt.text.toString())
                 handler.removeCallbacks(searchRunnable)
                 val inputMethodManager =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -163,15 +154,37 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEt.addTextChangedListener(simpleTextWatcher)
 
     }
+    //Как обрабатывать ошибку если делать запрос без интернета я не знаю((((
+    private fun doRequest(text: String) {
+        if(text.isNotEmpty()){
+            binding.searchPb.isVisible = true
+            Creator.provideMoviesInteractor().search(text, object : TrackInteractor.TrackConsumer {
+                override fun consume(foundTracks: List<Track>) {
+                    Log.e("Response", foundTracks.toString())
+                    runOnUiThread{
+                        tracks.clear()
+                        if (foundTracks.isNotEmpty()) {
+                            binding.errorIv.isVisible = false
+                            binding.errorTv.isVisible = false
+                            binding.errorBtn.isVisible = false
+                            tracks.addAll(foundTracks)
+                            trackAdapter.notifyDataSetChanged()
+                        } else {
+                            showErrorPictureAndText(getString(R.string.nothing_found))
+                        }
+                        binding.searchPb.isVisible = false
+                    }
+                }
+            })
+        }
 
-    private fun doResponse(text: String) {
-        if (binding.inputEt.text.isNotEmpty()) {
+        /*if (binding.inputEt.text.isNotEmpty()) {
             binding.searchPb.isVisible = true
             iTunesService.search(text).enqueue(object :
-                Callback<TrackResponse> {
+                Callback<TrackSearchResponse> {
                 override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
+                    call: Call<TrackSearchResponse>,
+                    response: Response<TrackSearchResponse>
                 ) {
                     if (response.code() == REQUEST_SUCCEEDED) {
                         tracks.clear()
@@ -193,13 +206,13 @@ class SearchActivity : AppCompatActivity() {
                     binding.searchPb.isVisible = false
                 }
 
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                override fun onFailure(call: Call<TrackSearchResponse>, t: Throwable) {
                     showErrorPictureAndText(getString(R.string.internet_problems))
                     lastResponse = text
                 }
 
             })
-        }
+        }*/
     }
 
     private fun showErrorPictureAndText(text: String) {
@@ -229,7 +242,7 @@ class SearchActivity : AppCompatActivity() {
         editTextData = savedInstanceState.getString(EDIT_TEXT_DATA, "")
         lastResponse = savedInstanceState.getString(LAST_RESPONSE_DATA, "")
         binding.inputEt.setText(editTextData)
-        doResponse(editTextData)
+        doRequest(editTextData)
     }
 
 
@@ -246,7 +259,7 @@ class SearchActivity : AppCompatActivity() {
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -258,10 +271,9 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
         const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
-        const val BASE_URL = "https://itunes.apple.com"
         const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
-        const val REQUEST_SUCCEEDED = 200
-        const val ERROR_RESPONSE_NOT_FOUND = 404
+        //const val REQUEST_SUCCEEDED = 200
+        //const val ERROR_RESPONSE_NOT_FOUND = 404
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
