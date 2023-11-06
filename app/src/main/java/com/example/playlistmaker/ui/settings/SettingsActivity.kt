@@ -7,12 +7,27 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.App
-import com.example.playlistmaker.App.Companion.NIGHT_MODE
 import com.example.playlistmaker.App.Companion.darkTheme
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.repository.NightModeRepositoryImpl
+import com.example.playlistmaker.data.storage.SharedPrefNightModeStorage
+import com.example.playlistmaker.domain.api.interactor.NightModeInteractor
+import com.example.playlistmaker.domain.api.repository.NightModeRepository
+import com.example.playlistmaker.domain.impl.NightModeInteractorImpl
+import com.example.playlistmaker.domain.models.NightMode
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    //Как черт создаю дважды, потому что тут надо передавать контекст, а без DI я не знаю как это делать
+    //Просто статик класс с контекстом не катит
+    private fun getNightModeRepository(): NightModeRepository {
+        return NightModeRepositoryImpl(SharedPrefNightModeStorage(applicationContext))
+    }
+
+    private fun provideNightModeInteractor(): NightModeInteractor {
+        return NightModeInteractorImpl(getNightModeRepository())
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -22,15 +37,16 @@ class SettingsActivity : AppCompatActivity() {
         val writeToSupportBtn = findViewById<FrameLayout>(R.id.write_to_support_fl)
         val userAgreementBtn = findViewById<FrameLayout>(R.id.user_agreement_fl)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
+        ///val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
 
         themeSwitcher.isChecked = darkTheme
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit()
+            provideNightModeInteractor().saveNightMode(NightMode(checked))
+            /*sharedPrefs.edit()
                 .putString(NIGHT_MODE, checked.toString())
-                .apply()
+                .apply()*/
         }
 
         backArrowBtn.setOnClickListener {

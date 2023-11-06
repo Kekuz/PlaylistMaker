@@ -16,7 +16,7 @@ import androidx.core.view.isVisible
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.domain.api.TrackInteractor
+import com.example.playlistmaker.domain.api.interactor.TrackInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
@@ -158,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
     private fun doRequest(text: String) {
         if(text.isNotEmpty()){
             binding.searchPb.isVisible = true
-            Creator.provideMoviesInteractor().search(text, object : TrackInteractor.TrackConsumer {
+            Creator.provideMoviesInteractor().searchTrack(text, object : TrackInteractor.TrackConsumer {
                 override fun consume(foundTracks: List<Track>) {
                     Log.e("Response", foundTracks.toString())
                     runOnUiThread{

@@ -2,19 +2,33 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.data.repository.NightModeRepositoryImpl
+import com.example.playlistmaker.data.storage.SharedPrefNightModeStorage
+import com.example.playlistmaker.domain.api.interactor.NightModeInteractor
+import com.example.playlistmaker.domain.api.repository.NightModeRepository
+import com.example.playlistmaker.domain.impl.NightModeInteractorImpl
 
 class App : Application() {
 
     companion object{
-        const val NIGHT_MODE = "night_mode"
         var darkTheme = false
+    }
+    //Как черт создаю дважды, потому что тут надо передавать контекст, а без DI я не знаю как это делать
+    //Просто статик класс с контекстом не катит
+    private fun getNightModeRepository(): NightModeRepository {
+        return NightModeRepositoryImpl(SharedPrefNightModeStorage(applicationContext))
+    }
+
+    fun provideNightModeInteractor(): NightModeInteractor {
+        return NightModeInteractorImpl(getNightModeRepository())
     }
 
 
     override fun onCreate() {
         super.onCreate()
-        val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getString(NIGHT_MODE, "false").toBoolean()
+
+        //Используем метод из интерактора
+        darkTheme = provideNightModeInteractor().getNightMode().isNight
 
         (applicationContext as App).switchTheme(darkTheme)
     }

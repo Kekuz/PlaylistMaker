@@ -1,8 +1,9 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.repository
 
-import com.example.playlistmaker.data.dto.TrackSearchRequest
-import com.example.playlistmaker.data.dto.TrackSearchResponse
-import com.example.playlistmaker.domain.api.TrackRepository
+import com.example.playlistmaker.data.NetworkClient
+import com.example.playlistmaker.data.network.dto.TrackSearchRequest
+import com.example.playlistmaker.data.network.dto.TrackSearchResponse
+import com.example.playlistmaker.domain.api.repository.TrackRepository
 import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
