@@ -13,22 +13,14 @@ class App : Application() {
     companion object{
         var darkTheme = false
     }
-    //Как черт создаю дважды, потому что тут надо передавать контекст, а без DI я не знаю как это делать
-    //Просто статик класс с контекстом не катит
-    private fun getNightModeRepository(): NightModeRepository {
-        return NightModeRepositoryImpl(SharedPrefNightModeStorage(applicationContext))
-    }
-
-    fun provideNightModeInteractor(): NightModeInteractor {
-        return NightModeInteractorImpl(getNightModeRepository())
-    }
 
 
     override fun onCreate() {
         super.onCreate()
+        Creator.initAppContext(applicationContext)//передаем контекст приложения в creator
 
         //Используем метод из интерактора
-        darkTheme = provideNightModeInteractor().getNightMode().isNight
+        darkTheme = Creator.provideNightModeInteractor().getNightMode().isNight
 
         (applicationContext as App).switchTheme(darkTheme)
     }
