@@ -48,6 +48,9 @@ class SearchActivity : AppCompatActivity() {
                 searchHistory.add(it)
                 val intent = Intent(this, AudioPlayerActivity::class.java)
                 intent.putExtra("track", Gson().toJson(it))
+
+                Creator.initTrack(it)// Добавляем в креатор трек
+
                 startActivity(intent)
                 historyAdapter.notifyDataSetChanged()
             }
@@ -158,7 +161,7 @@ class SearchActivity : AppCompatActivity() {
     private fun doRequest(text: String) {
         if(text.isNotEmpty()){
             binding.searchPb.isVisible = true
-            Creator.provideMoviesInteractor().searchTrack(text, object : TrackInteractor.TrackConsumer {
+            Creator.provideTrackInteractor().searchTrack(text, object : TrackInteractor.TrackConsumer {
                 override fun consume(foundTracks: List<Track>) {
                     Log.e("Response", foundTracks.toString())
                     runOnUiThread{
