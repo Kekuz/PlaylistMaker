@@ -17,17 +17,17 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
         if (response.resultCode == 200) {
             return (response as TrackSearchResponse).results.map {
                 Track(
-                    it.trackName,
-                    it.artistName,
-                    dateFormat.format(it.trackTimeMillis),
-                    it.artworkUrl100,
-                    it.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"),
-                    it.trackId,
-                    it.collectionName,
-                    it.releaseDate.substringBefore('-'),//Передаем только год
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl,
+                    it.trackName ?: "no name",
+                    it.artistName ?: "no artist",
+                    dateFormat.format(it.trackTimeMillis ?: 0),
+                    it.artworkUrl100 ?: "no artwork",
+                    it.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") ?: "no artwork",
+                    it.trackId ?: 0,
+                    it.collectionName ?: "no collection",
+                    it.releaseDate?.substringBefore('-') ?: "no date",//Передаем только год
+                    it.primaryGenreName ?: "no genre",
+                    it.country ?: "no country",
+                    it.previewUrl ?: "no preview",
                 )
             }
         } else {
