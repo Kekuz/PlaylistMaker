@@ -1,8 +1,8 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.domain.api.repository
 
 import com.example.playlistmaker.domain.models.PlayerStates
 
-interface MediaPlayer {
+interface MediaPlayerRepository {
 
     fun prepareMediaPlayer(consumer: () -> Unit)
 

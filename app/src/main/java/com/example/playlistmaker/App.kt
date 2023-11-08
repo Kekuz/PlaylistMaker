@@ -2,11 +2,6 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.repository.NightModeRepositoryImpl
-import com.example.playlistmaker.data.storage.SharedPrefNightModeStorage
-import com.example.playlistmaker.domain.api.interactor.NightModeInteractor
-import com.example.playlistmaker.domain.api.repository.NightModeRepository
-import com.example.playlistmaker.domain.impl.NightModeInteractorImpl
 
 class App : Application() {
 
@@ -22,7 +17,7 @@ class App : Application() {
         //Используем метод из интерактора
         darkTheme = Creator.provideNightModeInteractor().getNightMode().isNight
 
-        (applicationContext as App).switchTheme(darkTheme)
+        switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

@@ -1,14 +1,14 @@
-package com.example.playlistmaker.data.mediaplayer
+package com.example.playlistmaker.data.repository
 
 import android.util.Log
-import com.example.playlistmaker.domain.api.MediaPlayer
+import com.example.playlistmaker.domain.api.repository.MediaPlayerRepository
 import com.example.playlistmaker.domain.models.PlayerStates
 import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class AndroidMediaPlayerImpl(private val track : Track) : MediaPlayer {
+class AndroidMediaPlayerRepositoryImpl(private val track : Track) : MediaPlayerRepository {
 
     private val mediaPlayer = android.media.MediaPlayer()
     private var playerState = PlayerStates.STATE_DEFAULT

@@ -1,6 +1,5 @@
 package com.example.playlistmaker.presentation.audioplayer
 
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -11,8 +10,6 @@ import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.PlayerStates
 import com.example.playlistmaker.domain.models.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class AudioPlayerViewModel(val track: Track) : ViewModel() {
 

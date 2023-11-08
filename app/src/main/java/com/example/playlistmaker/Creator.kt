@@ -1,12 +1,12 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import com.example.playlistmaker.data.mediaplayer.AndroidMediaPlayerImpl
+import com.example.playlistmaker.data.repository.AndroidMediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.repository.NightModeRepositoryImpl
 import com.example.playlistmaker.data.storage.SharedPrefNightModeStorage
-import com.example.playlistmaker.domain.api.MediaPlayer
+import com.example.playlistmaker.domain.api.repository.MediaPlayerRepository
 import com.example.playlistmaker.domain.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.api.interactor.NightModeInteractor
 import com.example.playlistmaker.domain.api.interactor.TrackInteractor
@@ -43,8 +43,8 @@ object Creator {
         return TrackInteractorImpl(getTrackRepository())
     }
 
-    private fun getAndroidMediaPlayer(): MediaPlayer{
-        return AndroidMediaPlayerImpl(track)
+    private fun getAndroidMediaPlayer(): MediaPlayerRepository {
+        return AndroidMediaPlayerRepositoryImpl(track)
     }
 
     fun provideMediaPlayerInteractor(): MediaPlayerInteractor{

@@ -2,7 +2,6 @@ package com.example.playlistmaker.ui.audioplayer
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +11,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.presentation.audioplayer.AudioPlayerViewModel
 import com.example.playlistmaker.presentation.audioplayer.TrackFactory
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.example.playlistmaker.domain.models.PlayerStates
 
 
 class AudioPlayerActivity : AppCompatActivity() {
