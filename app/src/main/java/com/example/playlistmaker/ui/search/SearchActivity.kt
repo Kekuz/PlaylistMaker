@@ -12,11 +12,13 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.view.isVisible
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.api.interactor.TrackInteractor
+import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
@@ -45,14 +47,20 @@ class SearchActivity : AppCompatActivity() {
     private val onClick: (Track) -> Unit =
         {
             if (clickDebounce()) {
-                searchHistory.add(it)
-                val intent = Intent(this, AudioPlayerActivity::class.java)
-                intent.putExtra("track", Gson().toJson(it))
+                if (it.previewUrl != null) {
+                    Log.e("Track", it.toString())
+                    searchHistory.add(it)
+                    val intent = Intent(this, AudioPlayerActivity::class.java)
+                    intent.putExtra("track", Gson().toJson(it))
 
-                Creator.initTrack(it)// Добавляем в креатор трек
+                    Creator.initTrack(it)// Добавляем в креатор трек
 
-                startActivity(intent)
-                historyAdapter.notifyDataSetChanged()
+                    startActivity(intent)
+                    historyAdapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(this, "Песня отсутсвует на сервере", Toast.LENGTH_LONG).show()
+                }
+
             }
 
         }
@@ -157,28 +165,35 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEt.addTextChangedListener(simpleTextWatcher)
 
     }
+
     //Как обрабатывать ошибку если делать запрос без интернета я не знаю((((
     private fun doRequest(text: String) {
-        if(text.isNotEmpty()){
+        if (text.isNotEmpty()) {
             binding.searchPb.isVisible = true
-            Creator.provideTrackInteractor().searchTrack(text, object : TrackInteractor.TrackConsumer {
-                override fun consume(foundTracks: List<Track>) {
-                    Log.e("Response", foundTracks.toString())
-                    runOnUiThread{
-                        tracks.clear()
-                        if (foundTracks.isNotEmpty()) {
-                            binding.errorIv.isVisible = false
-                            binding.errorTv.isVisible = false
-                            binding.errorBtn.isVisible = false
-                            tracks.addAll(foundTracks)
-                            trackAdapter.notifyDataSetChanged()
-                        } else {
-                            showErrorPictureAndText(getString(R.string.nothing_found))
+            Creator.provideTrackInteractor()
+                .searchTrack(text, object : TrackInteractor.TrackConsumer {
+                    override fun consume(foundTracksResource: Resource) {
+                        runOnUiThread {
+                            if (foundTracksResource.responseCode == 200) {
+                                tracks.clear()
+                                if (foundTracksResource.track!!.isNotEmpty()) {
+                                    binding.errorIv.isVisible = false
+                                    binding.errorTv.isVisible = false
+                                    binding.errorBtn.isVisible = false
+                                    tracks.addAll(foundTracksResource.track)
+                                    trackAdapter.notifyDataSetChanged()
+                                } else {
+                                    showErrorPictureAndText(getString(R.string.nothing_found))
+                                }
+                            } else {
+                                showErrorPictureAndText(getString(R.string.internet_problems))
+                                lastResponse = text
+                            }
+                            binding.searchPb.isVisible = false
+
                         }
-                        binding.searchPb.isVisible = false
                     }
-                }
-            })
+                })
         }
 
         /*if (binding.inputEt.text.isNotEmpty()) {
@@ -275,6 +290,7 @@ class SearchActivity : AppCompatActivity() {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
         const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
         const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
+
         //const val REQUEST_SUCCEEDED = 200
         //const val ERROR_RESPONSE_NOT_FOUND = 404
         const val SEARCH_DEBOUNCE_DELAY = 2000L

@@ -156,6 +156,12 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="album_tv,album_value_tv" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/year_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="year_tv,year_value_tv" />
+
     <TextView
         android:id="@+id/album_tv"
         style="@style/audio_info_text_style_gray"

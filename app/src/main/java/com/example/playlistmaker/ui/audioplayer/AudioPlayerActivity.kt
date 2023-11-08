@@ -45,13 +45,17 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         //В задании написано: "Показывать название альбома (collectionName) (если есть)"
         //iTunes при отсутствии альбома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
-        if (viewModel.track.collectionName.endsWith(NO_ALBUM_SUBSTRING)) {
+        if (viewModel.track.collectionName.endsWith(NO_ALBUM_SUBSTRING) || viewModel.track.collectionName == "-") {
             albumGroup.isVisible = false
         } else {
             albumValueTv.text = viewModel.track.collectionName
         }
 
-        yearValueTv.text = viewModel.track.releaseYear
+        if(viewModel.track.releaseYear == "-"){
+            yearGroup.isVisible = false
+        }else{
+            yearValueTv.text = viewModel.track.releaseYear
+        }
         genreValueTv.text = viewModel.track.primaryGenreName
         countryValueTv.text = viewModel.track.country
         bindPicture()
