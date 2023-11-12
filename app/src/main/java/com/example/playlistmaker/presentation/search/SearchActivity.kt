@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.presentation.search
 
 import android.content.Context
 import android.content.Intent
@@ -20,7 +20,7 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.api.interactor.TrackInteractor
 import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
+import com.example.playlistmaker.presentation.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {

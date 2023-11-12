@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.audioplayer
+package com.example.playlistmaker.presentation.audioplayer
 
 
 import android.os.Bundle
@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.presentation.audioplayer.AudioPlayerViewModel
-import com.example.playlistmaker.presentation.audioplayer.TrackFactory
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 
 
