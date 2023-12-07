@@ -7,5 +7,7 @@ interface SettingsRepository {
     fun saveSettings(themeSettings: ThemeSettings)
 
     fun getSettings(): ThemeSettings
+
+    fun changeTheme()
     
 }

@@ -7,4 +7,6 @@ interface SettingsInteractor {
     fun saveSettings(themeSettings: ThemeSettings)
 
     fun getSettings(): ThemeSettings
+
+    fun changeTheme()
 }
