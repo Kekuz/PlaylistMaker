@@ -6,17 +6,18 @@ import androidx.appcompat.app.AppCompatDelegate
 class App : Application() {
 
     companion object{
-        const val NIGHT_MODE = "night_mode"
         var darkTheme = false
     }
 
 
     override fun onCreate() {
         super.onCreate()
-        val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getString(NIGHT_MODE, "false").toBoolean()
+        Creator.initAppContext(applicationContext)//передаем контекст приложения в creator
 
-        (applicationContext as App).switchTheme(darkTheme)
+        //Используем метод из интерактора
+        darkTheme = Creator.provideNightModeInteractor().getNightMode().isNight
+
+        switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

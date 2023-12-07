@@ -1,41 +1,37 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.settings
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.App.Companion.NIGHT_MODE
+import com.example.playlistmaker.App
 import com.example.playlistmaker.App.Companion.darkTheme
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.domain.models.NightMode
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val backArrowBtn = findViewById<ImageView>(R.id.iv_back_arrow_btn)
-        val shareAppBtn = findViewById<FrameLayout>(R.id.share_app_fl)
-        val writeToSupportBtn = findViewById<FrameLayout>(R.id.write_to_support_fl)
-        val userAgreementBtn = findViewById<FrameLayout>(R.id.user_agreement_fl)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val sharedPrefs = getSharedPreferences(NIGHT_MODE, MODE_PRIVATE)
+        binding.themeSwitcher.isChecked = darkTheme
 
-        themeSwitcher.isChecked = darkTheme
+        bindingClickListeners()
+        bindingThemeSwitcher()
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit()
-                .putString(NIGHT_MODE, checked.toString())
-                .apply()
-        }
+    }
 
-        backArrowBtn.setOnClickListener {
+    private fun bindingClickListeners() = with(binding) {
+        ivBackArrowBtn.setOnClickListener {
             finish()
         }
 
-        shareAppBtn.setOnClickListener {
+        shareAppFl.setOnClickListener {
             Intent(Intent.ACTION_SEND).apply {
                 val url = getString(R.string.share_url)
                 type = "text/plain"
@@ -44,7 +40,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        writeToSupportBtn.setOnClickListener {
+        writeToSupportFl.setOnClickListener {
             Intent(Intent.ACTION_SENDTO).apply {
                 val subject = getString(R.string.support_subject)
                 val message = getString(R.string.support_message)
@@ -56,11 +52,18 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        userAgreementBtn.setOnClickListener {
+        userAgreementFl.setOnClickListener {
             Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(getString(R.string.practicum_offer))
                 startActivity(this)
             }
+        }
+    }
+
+    private fun bindingThemeSwitcher() = with(binding) {
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            Creator.provideNightModeInteractor().saveNightMode(NightMode(checked))
         }
     }
 }

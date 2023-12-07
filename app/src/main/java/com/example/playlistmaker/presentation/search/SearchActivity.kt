@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search
+package com.example.playlistmaker.presentation.search
 
 import android.content.Context
 import android.content.Intent
@@ -12,60 +12,50 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.view.isVisible
-import com.example.playlistmaker.audioplayer.AudioPlayer
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.interactor.TrackInteractor
+import com.example.playlistmaker.domain.models.Resource
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.audioplayer.AudioPlayerActivity
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
 
+    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+
     private val searchRunnable = Runnable {
         val requestText = binding.inputEt.text.toString()
-        if(requestText.isNotEmpty()) {
-            doResponse(requestText)
-            Log.d("Debounce send response", requestText)
-        }
+        doRequest(requestText)
+        Log.d("Debounce send response", requestText)
     }
+
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    private val sharedPrefs by lazy {
-        getSharedPreferences(
-            HISTORY_SHARED_PREFERENCES,
-            MODE_PRIVATE
-        )
-    }
-    private val searchHistory by lazy { SearchHistory(sharedPrefs) }
-
     private val onClick: (Track) -> Unit =
         {
-            if (clickDebounce()){
-                searchHistory.add(it)
-                val intent = Intent(this, AudioPlayer::class.java)
-                intent.putExtra("track", Gson().toJson(it))
-                startActivity(intent)
-                historyAdapter.notifyDataSetChanged()
+            if (clickDebounce()) {
+                if (it.previewUrl != null) {
+                    Log.e("Track", it.toString())
+                    searchHistoryInteractor.addToTrackHistory(it)
+                    val intent = Intent(this, AudioPlayerActivity::class.java)
+                    intent.putExtra("track", Gson().toJson(it))
+
+                    Creator.initTrack(it)// Добавляем в креатор трек
+
+                    startActivity(intent)
+                    historyAdapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(this, "Песня отсутсвует на сервере", Toast.LENGTH_LONG).show()
+                }
             }
-
         }
-
-
-    private lateinit var historyAdapter: TrackAdapter
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(iTunesAPI::class.java)
 
     private var editTextData = ""
     private var lastResponse: String = ""
@@ -73,44 +63,23 @@ class SearchActivity : AppCompatActivity() {
     private val tracks = ArrayList<Track>()
     private val trackAdapter = TrackAdapter(tracks, onClick)
 
+    private val historyAdapter = TrackAdapter(searchHistoryInteractor.getTrackHistory(), onClick)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        historyAdapter = TrackAdapter(searchHistory.tracks, onClick)
+        binding.trackRv.adapter = trackAdapter
         binding.historyRv.adapter = historyAdapter
 
         binding.clearHistoryBtn.setOnClickListener {
-            searchHistory.clear()
+            searchHistoryInteractor.clearTrackHistory()
             binding.historySv.isVisible = false
         }
 
-
         binding.errorBtn.setOnClickListener {
-            doResponse(lastResponse)
-        }
-
-        binding.trackRv.adapter = trackAdapter
-
-        binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                doResponse(binding.inputEt.text.toString())
-                handler.removeCallbacks(searchRunnable)
-                val inputMethodManager =
-                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
-                true
-            }
-            false
-        }
-
-        binding.inputEt.setOnFocusChangeListener { _, hasFocus ->
-            binding.historySv.visibility =
-                if (hasFocus && binding.inputEt.text.isEmpty() && searchHistory.tracks.isNotEmpty())
-                    View.VISIBLE
-                else
-                    View.GONE
+            doRequest(lastResponse)
         }
 
         binding.ivBackArrowBtn.setOnClickListener {
@@ -132,6 +101,26 @@ class SearchActivity : AppCompatActivity() {
             binding.inputEt.clearFocus()
         }
 
+        binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                doRequest(binding.inputEt.text.toString())
+                handler.removeCallbacks(searchRunnable)
+                val inputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+                true
+            }
+            false
+        }
+
+        binding.inputEt.setOnFocusChangeListener { _, hasFocus ->
+            binding.historySv.visibility =
+                if (hasFocus && binding.inputEt.text.isEmpty() && searchHistoryInteractor.getTrackHistory().isNotEmpty())
+                    View.VISIBLE
+                else
+                    View.GONE
+        }
+
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
@@ -142,7 +131,7 @@ class SearchActivity : AppCompatActivity() {
                 editTextData = s.toString()
                 searchDebounce()
 
-                if (binding.inputEt.hasFocus() && s?.isEmpty() == true && searchHistory.tracks.isNotEmpty()) {
+                if (binding.inputEt.hasFocus() && s?.isEmpty() == true && searchHistoryInteractor.getTrackHistory().isNotEmpty()) {
                     binding.historySv.isVisible = true
 
                     binding.errorIv.isVisible = false
@@ -161,44 +150,34 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.inputEt.addTextChangedListener(simpleTextWatcher)
-
     }
 
-    private fun doResponse(text: String) {
-        if (binding.inputEt.text.isNotEmpty()) {
+    private fun doRequest(text: String) {
+        if (text.isNotEmpty()) {
             binding.searchPb.isVisible = true
-            iTunesService.search(text).enqueue(object :
-                Callback<TrackResponse> {
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    if (response.code() == REQUEST_SUCCEEDED) {
-                        tracks.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            binding.errorIv.isVisible = false
-                            binding.errorTv.isVisible = false
-                            binding.errorBtn.isVisible = false
-                            tracks.addAll(response.body()?.results!!)
-                            trackAdapter.notifyDataSetChanged()
-                        } else if (tracks.isEmpty()) {
-                            showErrorPictureAndText(getString(R.string.nothing_found))
+            Creator.provideTrackInteractor()
+                .searchTrack(text, object : TrackInteractor.TrackConsumer {
+                    override fun consume(foundTracksResource: Resource) {
+                        runOnUiThread {
+                            if (foundTracksResource.responseCode == 200) {
+                                tracks.clear()
+                                if (foundTracksResource.track!!.isNotEmpty()) {
+                                    binding.errorIv.isVisible = false
+                                    binding.errorTv.isVisible = false
+                                    binding.errorBtn.isVisible = false
+                                    tracks.addAll(foundTracksResource.track)
+                                    trackAdapter.notifyDataSetChanged()
+                                } else {
+                                    showErrorPictureAndText(getString(R.string.nothing_found))
+                                }
+                            } else {
+                                showErrorPictureAndText(getString(R.string.internet_problems))
+                                lastResponse = text
+                            }
+                            binding.searchPb.isVisible = false
                         }
-                    } else if (response.code() == ERROR_RESPONSE_NOT_FOUND) {
-                        showErrorPictureAndText(getString(R.string.nothing_found))
-                    } else {
-                        showErrorPictureAndText(getString(R.string.internet_problems))
-                        lastResponse = text
                     }
-                    binding.searchPb.isVisible = false
-                }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    showErrorPictureAndText(getString(R.string.internet_problems))
-                    lastResponse = text
-                }
-
-            })
+                })
         }
     }
 
@@ -229,9 +208,8 @@ class SearchActivity : AppCompatActivity() {
         editTextData = savedInstanceState.getString(EDIT_TEXT_DATA, "")
         lastResponse = savedInstanceState.getString(LAST_RESPONSE_DATA, "")
         binding.inputEt.setText(editTextData)
-        doResponse(editTextData)
+        doRequest(editTextData)
     }
-
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -246,7 +224,7 @@ class SearchActivity : AppCompatActivity() {
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -258,10 +236,7 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
         const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
-        const val BASE_URL = "https://itunes.apple.com"
-        const val HISTORY_SHARED_PREFERENCES = "history_shared_preferences"
-        const val REQUEST_SUCCEEDED = 200
-        const val ERROR_RESPONSE_NOT_FOUND = 404
+
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
