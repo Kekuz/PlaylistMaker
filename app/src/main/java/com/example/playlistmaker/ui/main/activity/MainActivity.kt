@@ -5,37 +5,49 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.databinding.ActivityMainBinding
+import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
+import com.example.playlistmaker.ui.main.view_model.MainViewModel
 import com.example.playlistmaker.ui.media.activity.MediaActivity
 import com.example.playlistmaker.ui.search.activity.SearchActivity
 import com.example.playlistmaker.ui.settings.activity.SettingsActivity
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val searchBtn = findViewById<Button>(R.id.search_btn)
-        val mediaBtn = findViewById<Button>(R.id.media_btn)
-        val settingsBtn = findViewById<Button>(R.id.settings_btn)
+        viewModel = ViewModelProvider(
+            this,
+            MainViewModel.getViewModelFactory()
+        )[MainViewModel::class.java]
 
-        val searchBtnClickListener: View.OnClickListener = object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                val intent = Intent(this@MainActivity, SearchActivity::class.java)
-                startActivity(intent)
-            }
-        }
-        searchBtn.setOnClickListener(searchBtnClickListener)
+        bindButtons()
 
-        mediaBtn.setOnClickListener{
-            val intent = Intent(this, MediaActivity::class.java)
+    }
+
+    private fun bindButtons() = with(binding) {
+        binding.searchBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, SearchActivity::class.java)
             startActivity(intent)
         }
 
-        settingsBtn.setOnClickListener{
-            val intent = Intent(this, SettingsActivity::class.java)
+        binding.mediaBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, MediaActivity::class.java)
             startActivity(intent)
         }
 
+        binding.settingsBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
