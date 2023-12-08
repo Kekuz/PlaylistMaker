@@ -8,9 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
+import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.example.playlistmaker.ui.audioplayer.view_model.TrackFactory
+import com.google.gson.Gson
 
 
 class AudioPlayerActivity : AppCompatActivity() {
@@ -21,58 +25,34 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         viewModel = ViewModelProvider(
             this,
-            TrackFactory(intent.extras?.getString("track")!!)
+            AudioPlayerViewModel.getViewModelFactory(
+                Gson().fromJson(
+                    intent.extras?.getString("track")!!,
+                    Track::class.java
+                ), Creator.provideMediaPlayerInteractor()
+            )
         )[AudioPlayerViewModel::class.java]
 
-        bindViews()
+        viewModel.loadView()
         bindClickListeners()
-        addObservers()
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.interactor.pausePlayer()
+        viewModel.mediaPlayerInteractor.pausePlayer()
     }
 
-
-    private fun bindViews() = with(binding) {
-
-        nameTv.text = viewModel.track.trackName
-        authorTv.text = viewModel.track.artistName
-        trackTimeValueTv.text = viewModel.track.trackTime
-
-        //В задании написано: "Показывать название альбома (collectionName) (если есть)"
-        //iTunes при отсутствии альбома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
-        if (viewModel.track.collectionName.endsWith(NO_ALBUM_SUBSTRING) || viewModel.track.collectionName == "-") {
-            albumGroup.isVisible = false
-        } else {
-            albumValueTv.text = viewModel.track.collectionName
-        }
-
-        if(viewModel.track.releaseYear == "-"){
-            yearGroup.isVisible = false
-        }else{
-            yearValueTv.text = viewModel.track.releaseYear
-        }
-        genreValueTv.text = viewModel.track.primaryGenreName
-        countryValueTv.text = viewModel.track.country
-        bindPicture()
-    }
-
-    private fun bindPicture() {
-        Glide.with(this)
-            .load(viewModel.track.artworkUrl512)
-            .placeholder(R.drawable.big_trackplaceholder)
-            .centerCrop()
-            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
-            .into(binding.artworkUrl100)
-    }
 
     private fun bindClickListeners() = with(binding) {
         playButton.setOnClickListener {
-            viewModel.interactor.playbackControl {
+            viewModel.mediaPlayerInteractor.playbackControl {
                 viewModel.playerButtonStateChanger(it)
             }
         }
@@ -82,19 +62,51 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun addObservers() = with(viewModel) {
-
-        currentTimeLiveData.observe(this@AudioPlayerActivity) {
-            binding.currentTimeTv.text = it
+    private fun render(state: AudioPlayerViewState) {
+        when (state) {
+            is AudioPlayerViewState.Content -> bindViews(state.track, state.player)
+            is AudioPlayerViewState.Player -> bindCurrentPlayer(state.player)
         }
 
-        playButtonImageLiveData.observe(this@AudioPlayerActivity) {
-            binding.playButton.setImageResource(it)
+    }
+
+    private fun bindViews(track: Track, playerView: PlayerView) = with(binding) {
+        nameTv.text = track.trackName
+        authorTv.text = track.artistName
+        trackTimeValueTv.text = track.trackTime
+        if (track.collectionName != "-") {
+            albumValueTv.text = track.collectionName
+            albumGroup.isVisible = true
         }
+        if (track.releaseYear != "-") {
+            yearValueTv.text = track.releaseYear
+            yearGroup.isVisible = true
+        }
+        genreValueTv.text = track.primaryGenreName
+        countryValueTv.text = track.country
+        bindPicture(track)
+        bindCurrentPlayer(playerView)
+    }
+
+    private fun bindPicture(track: Track) {
+        Glide.with(this)
+            .load(track.artworkUrl512)
+            .placeholder(R.drawable.big_trackplaceholder)
+            .centerCrop()
+            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
+            .into(binding.artworkUrl100)
+    }
+
+    private fun bindCurrentPlayer(playerView: PlayerView) = with(binding) {
+        currentTimeTv.text = playerView.playTime
+
+        if (playerView.playPicture)
+            playButton.setImageResource(R.drawable.audio_player_pause_button)
+        else
+            playButton.setImageResource(R.drawable.audio_player_play_button)
     }
 
     companion object {
         private const val TRACK_ICON_CORNER_RADIUS = 30
-        private const val NO_ALBUM_SUBSTRING = " - Single"
     }
 }
