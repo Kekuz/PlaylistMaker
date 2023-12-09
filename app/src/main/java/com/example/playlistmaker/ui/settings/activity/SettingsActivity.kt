@@ -3,7 +3,6 @@ package com.example.playlistmaker.ui.settings.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.domain.settings.models.ThemeSettings
 import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
@@ -19,10 +18,7 @@ class SettingsActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            SettingsViewModel.getViewModelFactory(
-                Creator.provideSharingInteractor(),
-                Creator.provideSettingsInteractor(),
-            )
+            SettingsViewModel.getViewModelFactory()
         )[SettingsViewModel::class.java]
 
         binding.themeSwitcher.isChecked = viewModel.getSettingsInteractor().getSettings().isNightMode

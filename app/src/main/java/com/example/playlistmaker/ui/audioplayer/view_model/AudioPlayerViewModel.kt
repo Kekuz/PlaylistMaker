@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
 import com.example.playlistmaker.domain.search.models.Track
@@ -91,10 +92,12 @@ class AudioPlayerViewModel(
 
         fun getViewModelFactory(
             track: Track,
-            mediaPlayerInteractor: MediaPlayerInteractor
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                AudioPlayerViewModel(track, mediaPlayerInteractor)
+                AudioPlayerViewModel(
+                    track,
+                    Creator.provideMediaPlayerInteractor(),
+                )
             }
         }
     }
