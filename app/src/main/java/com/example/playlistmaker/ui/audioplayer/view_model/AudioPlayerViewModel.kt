@@ -60,7 +60,7 @@ class AudioPlayerViewModel(
                 val currentTimer = mediaPlayerInteractor.getCurrentPosition()
                 player.playTime = currentTimer
                 stateLiveData.value = AudioPlayerViewState.Player(player)
-                handler.postDelayed(this, TIMER_REFRESH_DELAY)
+                handler.postDelayed(this, TIMER_REFRESH_DELAY_MILLIS)
                 Log.d("Timer", currentTimer)
             }
         }
@@ -81,13 +81,14 @@ class AudioPlayerViewModel(
 
             }
 
-            PlayerStates.STATE_DEFAULT -> {/*Что?*/
+            PlayerStates.STATE_DEFAULT -> {
+                //NOTHING TO DO
             }
         }
     }
 
     companion object {
-        const val TIMER_REFRESH_DELAY = 250L
+        const val TIMER_REFRESH_DELAY_MILLIS = 250L
         const val CURRENT_TIME_ZERO = "0:00"
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {

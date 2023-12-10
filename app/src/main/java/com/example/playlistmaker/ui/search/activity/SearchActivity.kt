@@ -31,7 +31,7 @@ class SearchActivity : AppCompatActivity() {
         getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
     private val onClick: (Track) -> Unit =
         {
             if (viewModel.clickDebounce()) {
@@ -157,7 +157,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
     private fun showContent(content: List<Track>) = with(binding) {
         //Это чтобы при повороте почистить ресайклер, а то че он
         if (inputEt.text.toString() != "") {

@@ -2,6 +2,7 @@ package com.example.playlistmaker.ui.audioplayer.activity
 
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -78,13 +79,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         genreValueTv.text = track.primaryGenreName
         countryValueTv.text = track.country
-        bindPicture(track)
+        artworkUrl100.setImage(track.artworkUrl512)
         bindCurrentPlayer(playerView)
     }
 
-    private fun bindPicture(track: Track) {
+    private fun ImageView.setImage(artworkUrl512: String) {
         Glide.with(this)
-            .load(track.artworkUrl512)
+            .load(artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
             .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))

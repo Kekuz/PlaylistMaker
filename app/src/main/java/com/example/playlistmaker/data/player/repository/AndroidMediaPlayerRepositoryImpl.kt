@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class AndroidMediaPlayerRepositoryImpl(private val track : Track) : MediaPlayerRepository {
+class AndroidMediaPlayerRepositoryImpl(private val track: Track) : MediaPlayerRepository {
 
     private val mediaPlayer = android.media.MediaPlayer()
     private var playerState = PlayerStates.STATE_DEFAULT
@@ -51,7 +51,9 @@ class AndroidMediaPlayerRepositoryImpl(private val track : Track) : MediaPlayerR
                 startPlayer()
             }
 
-            PlayerStates.STATE_DEFAULT -> {/*Что???*/}
+            PlayerStates.STATE_DEFAULT -> {
+                //NOTHING TO DO
+            }
         }
         consumer.invoke(playerState)
     }
