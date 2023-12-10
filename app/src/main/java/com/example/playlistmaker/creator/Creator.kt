@@ -51,7 +51,7 @@ object Creator {
     }
 
     private fun getTrackRepository(): TrackRepository {
-        return TrackRepositoryImpl(RetrofitNetworkClient())
+        return TrackRepositoryImpl(RetrofitNetworkClient(appContext), appContext)
     }
 
     fun provideTrackInteractor(): TrackInteractor {

@@ -1,6 +1,8 @@
 package com.example.playlistmaker.data.search.repository
 
+import android.content.Context
 import android.util.Log
+import com.example.playlistmaker.R
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.dto.TrackSearchRequest
 import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse
@@ -11,15 +13,24 @@ import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
+class TrackRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val context: Context
+) : TrackRepository {
+
     private val dateFormat =
         SimpleDateFormat("mm:ss", Locale.getDefault())
 
-    override fun search(term: String): Resource {
+    override fun search(term: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TrackSearchRequest(term))
-        if (response.resultCode == 200) {
-            return Resource(
-                (response as TrackSearchResponse).results.map {
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error(context.getString(R.string.internet_problems))
+            }
+
+            200 -> {
+                Log.d("Tracks", (response as TrackSearchResponse).results.toString())
+                Resource.Success((response).results.map {
                     Track(
                         it.trackName ?: "no name",
                         it.artistName ?: "no artist",
@@ -35,17 +46,19 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
                         it.country ?: "-",
                         it.previewUrl,
                     )
-                }, response.resultCode
-            )
-        } else {
-            return Resource(null, response.resultCode)
+                })
+            }
+
+            else -> {
+                Resource.Error(context.getString(R.string.server_error))
+            }
         }
     }
 
     private fun checkSingle(string: String?): String {
-        return if(string?.endsWith(NO_ALBUM_SUBSTRING) == true){
+        return if (string?.endsWith(NO_ALBUM_SUBSTRING) == true) {
             "-"
-        }else{
+        } else {
             string ?: "-"
         }
 
