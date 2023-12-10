@@ -39,12 +39,7 @@ class SearchViewModel(
 
     private val stateLiveData = MutableLiveData<SearchState>()
 
-
     fun observeState(): LiveData<SearchState> = stateLiveData
-
-    fun removeCallbacks() {
-        handler.removeCallbacks(searchRunnable)
-    }
 
     fun searchDebounce(request: String) {
         lastRequest = request
@@ -61,14 +56,29 @@ class SearchViewModel(
         return current
     }
 
-    fun doRequest(text: String) {
+    fun atOnceRequest(request: String) {
+        lastRequest = request
+        doRequest(request)
+        handler.removeCallbacks(searchRunnable)
+    }
+
+    fun reloadRequest(){
+        CoroutineScope(Dispatchers.IO).launch{
+            //Это чтобы было понятно что пользователь без интернета обновляет страницу
+            delay(500)
+            doRequest(lastRequest)
+        }
+
+    }
+
+    private fun doRequest(text: String) {
         if (text.isNotEmpty()) {
             stateLiveData.postValue(SearchState.Loading)
             trackInteractor.searchTrack(text, object : TrackInteractor.TrackConsumer {
                 override fun consume(foundTracksResource: List<Track>?, errorMessage: String?) {
                     CoroutineScope(Dispatchers.IO).launch{
                         if (foundTracksResource != null) {
-                            Log.e("Response", foundTracksResource.toString())
+                            Log.d("Response", foundTracksResource.toString())
                             if (foundTracksResource.isNotEmpty()) {
                                 stateLiveData.postValue(SearchState.Content(foundTracksResource))
                             } else {
@@ -96,16 +106,6 @@ class SearchViewModel(
         searchHistoryInteractor.clearTrackHistory()
     }
 
-    fun reloadRequest(){
-        Log.e("lastRequest", lastRequest)
-        CoroutineScope(Dispatchers.IO).launch{
-            //Это чтобы было понятно что пользователь без интернета обновляет страницу
-            delay(500)
-            doRequest(lastRequest)
-        }
-
-    }
-
     companion object {
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -116,8 +116,8 @@ class SearchViewModel(
             }
         }
 
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-        const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
     }
 }

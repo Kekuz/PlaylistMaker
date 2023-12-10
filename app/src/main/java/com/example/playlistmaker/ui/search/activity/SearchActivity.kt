@@ -102,13 +102,13 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearIv.setOnClickListener {
-            binding.inputEt.setText("")
+            inputEt.setText("")
             showEmpty()
             inputMethodManager?.hideSoftInputFromWindow(
                 this@SearchActivity.currentFocus?.windowToken,
                 0
             )
-            binding.inputEt.clearFocus()
+            inputEt.clearFocus()
         }
     }
 
@@ -139,8 +139,7 @@ class SearchActivity : AppCompatActivity() {
     private fun bindKeyboardSearchButton() {
         binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                viewModel.doRequest(binding.inputEt.text.toString())
-                viewModel.removeCallbacks()
+                viewModel.atOnceRequest(binding.inputEt.text.toString())
 
                 inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
                 true
