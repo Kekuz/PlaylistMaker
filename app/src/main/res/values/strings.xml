@@ -17,6 +17,8 @@
 
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="internet_problems">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="no_music_on_server">Песня отсутсвует на сервере</string>
     <string name="refresh">Обновить</string>
     <string name="clear_history">Очистить историю</string>
     <string name="you_were_looking_for">Вы искали</string>

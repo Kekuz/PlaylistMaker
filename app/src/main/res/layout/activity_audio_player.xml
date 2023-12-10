@@ -5,7 +5,7 @@
     style="@style/background_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.audioplayer.AudioPlayerActivity">
+    tools:context=".ui.audioplayer.activity.AudioPlayerActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -152,12 +152,14 @@
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/album_group"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="album_tv,album_value_tv" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/year_group"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="year_tv,year_value_tv" />
