@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.search.models.Track
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     SearchHistoryInteractor {
 
-    private val tracks = repository.getTracksFromStorage()
+    private val tracks = repository.getTracksFromStorage().toMutableList()
 
     override fun getTrackHistory(): List<Track> {
         return tracks

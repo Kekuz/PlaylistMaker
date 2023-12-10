@@ -16,7 +16,7 @@ class SharedPrefsSearchHistoryStorage(context: Context) : SearchHistoryStorage {
     )
     private val gson = Gson()
 
-    override fun getTracks(): MutableList<Track> {
+    override fun getTracks(): List<Track> {
         val json = sharedPreferences.getString(TRACK_ARRAY_KEY, "") ?: ""
 
         val itemsListType: Type = object : TypeToken<MutableList<Track?>?>() {}.type
