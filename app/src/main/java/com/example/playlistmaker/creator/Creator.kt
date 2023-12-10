@@ -38,6 +38,8 @@ object Creator {
         trackToOpenPlayerActivity = newTrack
     }
 
+    fun getTrack(): Track = trackToOpenPlayerActivity
+
     private fun getSettingsRepository(): SettingsRepository {
         return SettingsRepositoryImpl(SharedPrefSettingsStorage(appContext))
     }

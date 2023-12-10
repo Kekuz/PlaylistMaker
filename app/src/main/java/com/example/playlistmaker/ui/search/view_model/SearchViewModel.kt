@@ -30,6 +30,8 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private var lastRequest = ""
+    private var isClickAllowed = true
+
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable {
         doRequest(lastRequest)
@@ -37,8 +39,6 @@ class SearchViewModel(
 
     private val stateLiveData = MutableLiveData<SearchState>()
 
-
-    private var isClickAllowed = true
 
     fun observeState(): LiveData<SearchState> = stateLiveData
 
@@ -84,9 +84,22 @@ class SearchViewModel(
         }
     }
 
+    fun addToHistory(track: Track) {
+        searchHistoryInteractor.addToTrackHistory(track)
+    }
+
+    fun getHistory(): List<Track> {
+        return searchHistoryInteractor.getTrackHistory()
+    }
+
+    fun clearHistory(){
+        searchHistoryInteractor.clearTrackHistory()
+    }
+
     fun reloadRequest(){
         Log.e("lastRequest", lastRequest)
         CoroutineScope(Dispatchers.IO).launch{
+            //Это чтобы было понятно что пользователь без интернета обновляет страницу
             delay(500)
             doRequest(lastRequest)
         }

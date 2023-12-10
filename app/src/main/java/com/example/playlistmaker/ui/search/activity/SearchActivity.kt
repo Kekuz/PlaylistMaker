@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.search.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +8,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -27,23 +27,25 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var viewModel: SearchViewModel
 
-    //private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+    private val inputMethodManager by lazy {
+        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
     private val onClick: (Track) -> Unit =
         {
             if (viewModel.clickDebounce()) {
                 if (it.previewUrl != null) {
-                    Log.e("Track", it.toString())
-                    //searchHistoryInteractor.addToTrackHistory(it)
-                    val intent = Intent(this, AudioPlayerActivity::class.java)
-                    intent.putExtra("track", Gson().toJson(it))
+                    Log.d("Track opened", it.toString())
+                    viewModel.addToHistory(it)
 
                     Creator.initTrack(it)// Добавляем в креатор трек
-
+                    val intent = Intent(this, AudioPlayerActivity::class.java)
                     startActivity(intent)
-                    //historyAdapter.notifyDataSetChanged()
+                    historyAdapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(this, "Песня отсутсвует на сервере", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.no_music_on_server), Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
@@ -51,7 +53,8 @@ class SearchActivity : AppCompatActivity() {
     private val tracks = ArrayList<Track>()
     private val trackAdapter = TrackAdapter(tracks, onClick)
 
-    //private val historyAdapter = TrackAdapter(searchHistoryInteractor.getTrackHistory(), onClick)
+    private lateinit var history: List<Track>
+    private lateinit var historyAdapter: TrackAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,79 +66,86 @@ class SearchActivity : AppCompatActivity() {
             SearchViewModel.getViewModelFactory()
         )[SearchViewModel::class.java]
 
-        binding.trackRv.adapter = trackAdapter
-        //binding.historyRv.adapter = historyAdapter
+        bindAdapters()
+        bindButtons()
+        bindHistoryShowing()
+        bindKeyboardSearchButton()
 
-        /*binding.clearHistoryBtn.setOnClickListener {
-            searchHistoryInteractor.clearTrackHistory()
-            binding.historySv.isVisible = false
-        }*/
+        binding.inputEt.addTextChangedListener(getTextWatcher())
 
-        binding.errorBtn.setOnClickListener {
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+    }
+
+    private fun bindAdapters() = with(binding) {
+        trackRv.adapter = trackAdapter
+
+        history = viewModel.getHistory()
+        historyAdapter = TrackAdapter(history, onClick)
+        historyRv.adapter = historyAdapter
+    }
+
+    private fun bindButtons() = with(binding) {
+        clearHistoryBtn.setOnClickListener {
+            showEmpty()
+            viewModel.clearHistory()
+        }
+
+        errorBtn.setOnClickListener {
             showEmpty()
             viewModel.reloadRequest()
         }
 
-        binding.ivBackArrowBtn.setOnClickListener {
+        ivBackArrowBtn.setOnClickListener {
             finish()
         }
 
-        binding.clearIv.setOnClickListener {
+        clearIv.setOnClickListener {
             binding.inputEt.setText("")
             showEmpty()
-
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
-
+            inputMethodManager?.hideSoftInputFromWindow(
+                this@SearchActivity.currentFocus?.windowToken,
+                0
+            )
             binding.inputEt.clearFocus()
         }
+    }
 
-        binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                viewModel.doRequest(binding.inputEt.text.toString())
-                viewModel.removeCallbacks()
-                val inputMethodManager =
-                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
-                true
-            }
-            false
-        }
-
-        /*binding.inputEt.setOnFocusChangeListener { _, hasFocus ->
-            binding.historySv.visibility =
-                if (hasFocus && binding.inputEt.text.isEmpty() && searchHistoryInteractor.getTrackHistory().isNotEmpty())
-                    View.VISIBLE
-                else
-                    View.GONE
-        }*/
-
-        val simpleTextWatcher = object : TextWatcher {
+    private fun getTextWatcher(): TextWatcher {
+        return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 showClearBnt(s)
                 viewModel.searchDebounce(s.toString())
-                /*if (binding.inputEt.hasFocus() && s?.isEmpty() == true *//*&& searchHistoryInteractor.getTrackHistory().isNotEmpty()*//*) {
-                    binding.historySv.isVisible = true
-
-                    binding.errorIv.isVisible = false
-                    binding.errorTv.isVisible = false
-                    binding.errorBtn.isVisible = false
-                    tracks.clear()
-                    trackAdapter.notifyDataSetChanged()
-                } else {
-                    binding.historySv.isVisible = false
-                }*/
             }
         }
+    }
 
-        binding.inputEt.addTextChangedListener(simpleTextWatcher)
+    private fun bindHistoryShowing() = with(binding) {
+        inputEt.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && inputEt.text.isEmpty() && viewModel.getHistory().isNotEmpty()) {
+                historySv.isVisible = true
+                clearHistoryBtn.isVisible = true
+            } else {
+                historySv.isVisible = false
+                clearHistoryBtn.isVisible = false
+            }
+        }
+    }
 
-        viewModel.observeState().observe(this) {
-            render(it)
+    private fun bindKeyboardSearchButton() {
+        binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                viewModel.doRequest(binding.inputEt.text.toString())
+                viewModel.removeCallbacks()
+
+                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+                true
+            }
+            false
         }
     }
 
@@ -148,83 +158,84 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showContent(content: List<Track>) {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showContent(content: List<Track>) = with(binding) {
         //Это чтобы при повороте почистить ресайклер, а то че он
-        if (binding.inputEt.text.toString() != "") {
-            binding.searchPb.isVisible = false
-            binding.errorIv.isVisible = false
-            binding.errorTv.isVisible = false
-            binding.errorBtn.isVisible = false
+        if (inputEt.text.toString() != "") {
+            searchPb.isVisible = false
+            errorIv.isVisible = false
+            errorTv.isVisible = false
+            errorBtn.isVisible = false
             tracks.clear()
             tracks.addAll(content)
             trackAdapter.notifyDataSetChanged()
-            binding.trackRv.isVisible = true
+            trackRv.isVisible = true
+
+            historySv.isVisible = false
+            clearHistoryBtn.isVisible = false
         }
     }
 
-    private fun showEmptyContent() {
+    private fun showEmptyContent() = with(binding) {
         //Это чтобы при повороте почистить ресайклер, а то че он
-        if (binding.inputEt.text.toString() != "") {
-            binding.searchPb.isVisible = false
-            binding.trackRv.isVisible = false
+        if (inputEt.text.toString() != "") {
+            searchPb.isVisible = false
+            trackRv.isVisible = false
 
-            binding.errorIv.setBackgroundResource(R.drawable.not_found_icon)
-            binding.errorTv.text = getString(R.string.nothing_found)
-            binding.errorIv.isVisible = true
-            binding.errorTv.isVisible = true
+            errorIv.setBackgroundResource(R.drawable.not_found_icon)
+            errorTv.text = getString(R.string.nothing_found)
+            errorIv.isVisible = true
+            errorTv.isVisible = true
+
+            historySv.isVisible = false
+            clearHistoryBtn.isVisible = false
         }
     }
 
-    private fun showError(errorMessage: String) {
+    private fun showError(errorMessage: String) = with(binding) {
         //Это чтобы при повороте почистить ресайклер, а то че он
-        if(binding.inputEt.text.toString() != "") {
-            binding.searchPb.isVisible = false
-            binding.trackRv.isVisible = false
+        if (inputEt.text.toString() != "") {
+            searchPb.isVisible = false
+            trackRv.isVisible = false
 
-            binding.errorIv.setBackgroundResource(R.drawable.internet_problem_icon)
-            binding.errorTv.text = errorMessage
-            binding.errorBtn.isVisible = true
-            binding.errorIv.isVisible = true
-            binding.errorTv.isVisible = true
+            errorIv.setBackgroundResource(R.drawable.internet_problem_icon)
+            errorTv.text = errorMessage
+            errorBtn.isVisible = true
+            errorIv.isVisible = true
+            errorTv.isVisible = true
+
+            historySv.isVisible = false
+            clearHistoryBtn.isVisible = false
         }
 
     }
 
-    private fun showLoading() {
-        binding.searchPb.isVisible = true
+    private fun showLoading() = with(binding) {
+        searchPb.isVisible = true
+
+        errorIv.isVisible = false
+        errorBtn.isVisible = false
+        errorTv.isVisible = false
+
+        trackRv.isVisible = false
+        historySv.isVisible = false
+        clearHistoryBtn.isVisible = false
     }
 
     private fun showClearBnt(s: CharSequence?) {
         binding.clearIv.isVisible = !s.isNullOrEmpty()
     }
 
-    private fun showEmpty() {
-        binding.trackRv.isVisible = false
-        binding.errorIv.isVisible = false
-        binding.errorBtn.isVisible = false
-        binding.errorTv.isVisible = false
-        binding.searchPb.isVisible = false
-    }
+    private fun showEmpty() = with(binding) {
+        trackRv.isVisible = false
 
-    /*override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(EDIT_TEXT_DATA, editTextData)
-        outState.putString(LAST_RESPONSE_DATA, lastResponse)
+        errorIv.isVisible = false
+        errorBtn.isVisible = false
+        errorTv.isVisible = false
 
-    }*/
+        searchPb.isVisible = false
 
-    /*override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        editTextData = savedInstanceState.getString(EDIT_TEXT_DATA, "")
-        lastResponse = savedInstanceState.getString(LAST_RESPONSE_DATA, "")
-        binding.inputEt.setText(editTextData)
-        viewModel.doRequest(editTextData)
-    }*/
-
-
-    private companion object {
-        const val EDIT_TEXT_DATA = "EDIT_TEXT_DATA"
-        const val LAST_RESPONSE_DATA = "LAST_RESPONSE_DATA"
-
+        clearHistoryBtn.isVisible = false
+        historySv.isVisible = false
     }
 }

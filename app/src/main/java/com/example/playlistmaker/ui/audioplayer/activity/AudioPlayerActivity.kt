@@ -27,12 +27,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            AudioPlayerViewModel.getViewModelFactory(
-                Gson().fromJson(
-                    intent.extras?.getString("track")!!,
-                    Track::class.java
-                )
-            )
+            AudioPlayerViewModel.getViewModelFactory()
         )[AudioPlayerViewModel::class.java]
 
         viewModel.loadView()

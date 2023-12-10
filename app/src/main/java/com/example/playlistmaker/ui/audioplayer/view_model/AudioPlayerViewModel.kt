@@ -90,12 +90,10 @@ class AudioPlayerViewModel(
         const val TIMER_REFRESH_DELAY = 250L
         const val CURRENT_TIME_ZERO = "0:00"
 
-        fun getViewModelFactory(
-            track: Track,
-        ): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 AudioPlayerViewModel(
-                    track,
+                    Creator.getTrack(),
                     Creator.provideMediaPlayerInteractor(),
                 )
             }
