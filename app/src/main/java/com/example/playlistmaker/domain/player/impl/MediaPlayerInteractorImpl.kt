@@ -4,8 +4,9 @@ import com.example.playlistmaker.domain.player.api.repository.MediaPlayerReposit
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
 
-class MediaPlayerInteractorImpl(private val mediaPlayerRepository: MediaPlayerRepository):
-    MediaPlayerInteractor {
+class MediaPlayerInteractorImpl(
+    private val mediaPlayerRepository: MediaPlayerRepository,
+) : MediaPlayerInteractor {
     override fun prepareMediaPlayer(consumer: () -> Unit) {
         mediaPlayerRepository.prepareMediaPlayer(consumer)
     }

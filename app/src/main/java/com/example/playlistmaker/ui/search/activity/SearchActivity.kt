@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.search.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,20 +11,19 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.player.models.TrackForPlayer
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
-import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val inputMethodManager by lazy {
         getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -39,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
                     Log.d("Track opened", it.toString())
                     viewModel.addToHistory(it)
 
-                    Creator.initTrack(it)// Добавляем в креатор трек
+                    TrackForPlayer.init(it)// Добавляем трек в синглтон
                     val intent = Intent(this, AudioPlayerActivity::class.java)
                     startActivity(intent)
                     historyAdapter.notifyDataSetChanged()
@@ -60,11 +58,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         bindAdapters()
         bindButtons()
