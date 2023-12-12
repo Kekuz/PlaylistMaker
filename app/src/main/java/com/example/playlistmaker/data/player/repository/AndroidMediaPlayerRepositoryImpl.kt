@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data.player.repository
 
+import android.media.MediaPlayer
 import android.util.Log
 import com.example.playlistmaker.domain.player.api.repository.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.PlayerStates
@@ -8,9 +9,11 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class AndroidMediaPlayerRepositoryImpl(private val track: Track) : MediaPlayerRepository {
+class AndroidMediaPlayerRepositoryImpl(
+    private val track: Track,
+    private val mediaPlayer: MediaPlayer,
+) : MediaPlayerRepository {
 
-    private val mediaPlayer = android.media.MediaPlayer()
     private var playerState = PlayerStates.STATE_DEFAULT
 
     private val dateFormat = SimpleDateFormat("m:ss", Locale.getDefault())

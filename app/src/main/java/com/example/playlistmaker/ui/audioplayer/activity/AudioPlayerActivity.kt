@@ -5,31 +5,29 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.domain.player.models.TrackForPlayer
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
 class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel: AudioPlayerViewModel by viewModel{
+        parametersOf(TrackForPlayer.get())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getViewModelFactory()
-        )[AudioPlayerViewModel::class.java]
 
         viewModel.loadView()
         bindClickListeners()
@@ -41,15 +39,13 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.mediaPlayerInteractor.pausePlayer()
+        viewModel.pausePlayer()
     }
 
 
     private fun bindClickListeners() = with(binding) {
         playButton.setOnClickListener {
-            viewModel.mediaPlayerInteractor.playbackControl {
-                viewModel.playerButtonStateChanger(it)
-            }
+            viewModel.playBackControl()
         }
 
         ivBackArrowBtn.setOnClickListener {
