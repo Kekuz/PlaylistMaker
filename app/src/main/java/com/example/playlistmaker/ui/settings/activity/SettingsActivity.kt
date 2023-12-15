@@ -24,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun bindingClickListeners() = with(binding) {
-        ivBackArrowBtn.setOnClickListener {
+        binding.settingsToolBar.setNavigationOnClickListener {
             finish()
         }
 

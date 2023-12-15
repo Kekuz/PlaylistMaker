@@ -29,10 +29,6 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <style name="back_arrow_color">
-        <item name="android:tint">@color/yp_white</item>
-    </style>
-
     <style name="background_color">
         <item name="android:background">@color/yp_black</item>
     </style>

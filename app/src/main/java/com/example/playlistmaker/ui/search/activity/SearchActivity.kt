@@ -90,7 +90,7 @@ class SearchActivity : AppCompatActivity() {
             viewModel.reloadRequest()
         }
 
-        ivBackArrowBtn.setOnClickListener {
+        binding.searchToolBar.setNavigationOnClickListener {
             finish()
         }
 

@@ -35,15 +35,15 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.955" />
 
-    <ImageView
-        android:id="@+id/iv_back_arrow_btn"
-        style="@style/back_arrow_color"
-        android:layout_width="wrap_content"
+    <Toolbar
+        android:id="@+id/audio_player_tool_bar"
+        style="@style/toolbar_style"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/audio_player_back_arrow_padding"
-        android:src="@drawable/back_arrow_24"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/artworkUrl100"
@@ -54,7 +54,7 @@
         app:layout_constraintBottom_toTopOf="@+id/name_tv"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/iv_back_arrow_btn" />
+        app:layout_constraintTop_toBottomOf="@id/audio_player_tool_bar" />
 
     <TextView
         android:id="@+id/name_tv"
