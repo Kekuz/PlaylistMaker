@@ -29,10 +29,14 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="main_toolbar_style">
+        <item name="android:titleTextColor">@color/yp_white</item>
+        <item name="android:titleTextAppearance">@style/title_text_style</item>
+    </style>
 
-
-    <style name="back_arrow_color">
-        <item name="android:tint">@color/yp_black</item>
+    <style name="toolbar_style">
+        <item name="android:navigationIcon">@drawable/back_arrow_24</item>
+        <item name="android:titleTextAppearance">@style/title_text_style</item>
     </style>
 
     <style name="background_color">

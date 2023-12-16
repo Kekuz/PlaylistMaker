@@ -48,7 +48,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             viewModel.playBackControl()
         }
 
-        ivBackArrowBtn.setOnClickListener {
+        audioPlayerToolBar.setNavigationOnClickListener {
             finish()
         }
     }
