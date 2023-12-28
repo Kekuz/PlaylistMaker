@@ -33,9 +33,11 @@ class SearchViewModel(
     fun observeState(): LiveData<SearchState> = stateLiveData
 
     fun searchDebounce(request: String) {
-        lastRequest = request
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        if(lastRequest != request){// это чтобы когда мы возвращались на фрагмент, он заново не искал
+            lastRequest = request
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        }
     }
 
     fun clickDebounce(): Boolean {

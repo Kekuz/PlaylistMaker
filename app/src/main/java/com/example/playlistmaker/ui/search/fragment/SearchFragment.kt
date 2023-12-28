@@ -103,6 +103,7 @@ class SearchFragment : Fragment() {
 
         clearIv.setOnClickListener {
             inputEt.setText("")
+            tracks.clear()
             showEmpty()
 
             inputMethodManager?.hideSoftInputFromWindow(
@@ -121,7 +122,6 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 showClearBnt(s)
-                //Log.e("search", s.toString())
                 viewModel.searchDebounce(s.toString())
             }
         }
