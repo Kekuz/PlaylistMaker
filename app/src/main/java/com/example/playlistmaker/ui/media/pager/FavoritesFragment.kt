@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.media.fragment
+package com.example.playlistmaker.ui.media.pager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.ui.media.view_model.FavouritesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavouritesFragment: Fragment() {
+class FavoritesFragment: Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
     private val viewModel by viewModel<FavouritesViewModel>()
@@ -20,6 +20,6 @@ class FavouritesFragment: Fragment() {
     }
 
     companion object {
-        fun newInstance(): FavouritesFragment = FavouritesFragment()
+        fun newInstance(): FavoritesFragment = FavoritesFragment()
     }
 }

@@ -33,4 +33,12 @@
         <item name="android:background">@color/yp_black</item>
     </style>
 
+    <style name="bottom_navigation">
+        <item name="android:background">@color/yp_black</item>
+        <item name="elevation">0dp</item>
+        <item name="itemRippleColor">@color/yp_ripple_blue</item>
+        <item name="itemTextColor">@color/bottom_navigation_items_color</item>
+        <item name="itemIconTint">@color/bottom_navigation_items_color</item>
+    </style>
+
 </resources>

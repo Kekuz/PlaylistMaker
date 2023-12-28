@@ -1,18 +1,21 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.player.models.TrackForPlayer
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
@@ -20,13 +23,13 @@ import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private lateinit var binding: FragmentSearchBinding
     private val viewModel by viewModel<SearchViewModel>()
 
     private val inputMethodManager by lazy {
-        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     }
 
 
@@ -38,11 +41,11 @@ class SearchActivity : AppCompatActivity() {
                     viewModel.addToHistory(it)
 
                     TrackForPlayer.init(it)// Добавляем трек в синглтон
-                    val intent = Intent(this, AudioPlayerActivity::class.java)
+                    val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
                     startActivity(intent)
                     historyAdapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(this, getString(R.string.no_music_on_server), Toast.LENGTH_LONG)
+                    Toast.makeText(requireContext(), getString(R.string.no_music_on_server), Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -54,10 +57,20 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var history: List<Track>
     private lateinit var historyAdapter: TrackAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(layoutInflater)
+
+        return binding.root
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         bindAdapters()
         bindButtons()
@@ -66,7 +79,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputEt.addTextChangedListener(getTextWatcher())
 
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
     }
@@ -90,17 +103,15 @@ class SearchActivity : AppCompatActivity() {
             viewModel.reloadRequest()
         }
 
-        binding.searchToolBar.setNavigationOnClickListener {
-            finish()
-        }
-
         clearIv.setOnClickListener {
             inputEt.setText("")
             showEmpty()
+
             inputMethodManager?.hideSoftInputFromWindow(
-                this@SearchActivity.currentFocus?.windowToken,
+                view?.windowToken,
                 0
             )
+
             inputEt.clearFocus()
         }
     }
@@ -133,8 +144,6 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 viewModel.atOnceRequest(binding.inputEt.text.toString())
-
-                inputMethodManager?.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
                 true
             }
             false
