@@ -1,15 +1,20 @@
-package com.example.playlistmaker.ui.audioplayer.activity
+package com.example.playlistmaker.ui.audioplayer.fragment
 
-
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.example.playlistmaker.domain.player.models.TrackForPlayer
+import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
@@ -18,21 +23,39 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
-class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAudioPlayerBinding
+class AudioPlayerFragment : Fragment() {
+    private lateinit var binding: FragmentAudioPlayerBinding
     private val viewModel: AudioPlayerViewModel by viewModel{
-        parametersOf(TrackForPlayer.get())
+        parametersOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                requireArguments().getParcelable(ARGS_TRACK, Track::class.java)
+            } else {
+                requireArguments().getParcelable(ARGS_TRACK)
+            }
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentAudioPlayerBinding.inflate(layoutInflater)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.loadView()
         bindClickListeners()
 
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
     }
@@ -42,6 +65,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    }
+
 
     private fun bindClickListeners() = with(binding) {
         playButton.setOnClickListener {
@@ -49,7 +77,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         audioPlayerToolBar.setNavigationOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
     }
 
@@ -79,7 +107,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         bindCurrentPlayer(playerView)
     }
 
-    private fun ImageView.setImage(artworkUrl512: String) {
+    private fun ImageView.setImage(artworkUrl512: String?) {
         Glide.with(this)
             .load(artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
@@ -99,5 +127,10 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     companion object {
         private const val TRACK_ICON_CORNER_RADIUS = 30
+        private const val ARGS_TRACK = "track"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(ARGS_TRACK to track)
+
     }
 }

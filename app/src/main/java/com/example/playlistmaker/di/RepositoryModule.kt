@@ -5,10 +5,8 @@ import com.example.playlistmaker.data.search.repository.SearchHistoryRepositoryI
 import com.example.playlistmaker.data.search.repository.TrackRepositoryImpl
 import com.example.playlistmaker.data.settings.repository.SettingsRepositoryImpl
 import com.example.playlistmaker.domain.player.api.repository.MediaPlayerRepository
-import com.example.playlistmaker.domain.player.models.TrackForPlayer
 import com.example.playlistmaker.domain.search.api.repository.SearchHistoryRepository
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
-import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.domain.settings.api.repository.SettingsRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module

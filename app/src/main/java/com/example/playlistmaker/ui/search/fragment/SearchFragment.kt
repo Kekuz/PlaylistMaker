@@ -1,7 +1,6 @@
 package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,11 +13,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.domain.player.models.TrackForPlayer
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
+import com.example.playlistmaker.ui.audioplayer.fragment.AudioPlayerFragment
 import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,10 +38,9 @@ class SearchFragment : Fragment() {
                 if (it.previewUrl != null) {
                     Log.d("Track opened", it.toString())
                     viewModel.addToHistory(it)
-
-                    TrackForPlayer.init(it)// Добавляем трек в синглтон
-                    val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-                    startActivity(intent)
+                    findNavController().navigate(
+                        R.id.action_searchFragment_to_audioPlayerFragment,
+                        AudioPlayerFragment.createArgs(it))
                     historyAdapter.notifyDataSetChanged()
                 } else {
                     Toast.makeText(requireContext(), getString(R.string.no_music_on_server), Toast.LENGTH_LONG)
@@ -123,6 +121,7 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 showClearBnt(s)
+                //Log.e("search", s.toString())
                 viewModel.searchDebounce(s.toString())
             }
         }

@@ -9,7 +9,6 @@ import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
 import com.example.playlistmaker.domain.search.models.Resource
 import com.example.playlistmaker.domain.search.models.Track
-import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 

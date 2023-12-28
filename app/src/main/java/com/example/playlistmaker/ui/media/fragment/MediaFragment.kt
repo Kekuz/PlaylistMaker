@@ -31,20 +31,13 @@ class MediaFragment : Fragment() {
 
         binding.pager.adapter = MediaPagerAdapter(childFragmentManager, lifecycle)
         binding.tabLayout.tabRippleColor = null
-        tabMediator = TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             when(position) {
                 0 -> tab.text = getString(R.string.favorite_tracks)
                 1 -> tab.text = getString(R.string.playlists)
             }
-        }
-
-        tabMediator.attach()
+        }.attach()
 
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onDetach() {
-        tabMediator.detach()
-        super.onDetach()
     }
 }

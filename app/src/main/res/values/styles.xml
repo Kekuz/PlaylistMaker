@@ -48,6 +48,8 @@
     </style>
 
     <style name="bottom_navigation">
+        <item name="itemTextAppearanceInactive">@style/MyBottomNavigationView</item>
+        <item name="itemTextAppearanceActive">@style/MyBottomNavigationView</item>
         <item name="android:background">@color/yp_white</item>
         <item name="elevation">0dp</item>
         <item name="itemRippleColor">@color/yp_ripple_blue</item>

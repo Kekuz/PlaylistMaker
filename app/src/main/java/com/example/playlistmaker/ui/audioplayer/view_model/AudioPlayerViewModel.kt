@@ -29,8 +29,8 @@ class AudioPlayerViewModel(
     }
 
     override fun onCleared() {
-        super.onCleared()
         releasePlayer()
+        super.onCleared()
     }
 
     fun loadView() {
@@ -72,7 +72,7 @@ class AudioPlayerViewModel(
         }
     }
 
-    fun playerButtonStateChanger(playerState: PlayerStates) {
+    private fun playerButtonStateChanger(playerState: PlayerStates) {
         when (playerState) {
             PlayerStates.STATE_PLAYING -> {
                 playerView.playPicture = true
