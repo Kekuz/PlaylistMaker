@@ -3,6 +3,7 @@ package com.example.playlistmaker.ui.audioplayer.fragment
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
@@ -24,7 +26,8 @@ import org.koin.core.parameter.parametersOf
 
 
 class AudioPlayerFragment : Fragment() {
-    private lateinit var binding: FragmentAudioPlayerBinding
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: AudioPlayerViewModel by viewModel{
         parametersOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
@@ -37,6 +40,8 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.setActivityOrientation(requireActivity().requestedOrientation)
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -45,7 +50,7 @@ class AudioPlayerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAudioPlayerBinding.inflate(layoutInflater)
+        _binding = FragmentAudioPlayerBinding.inflate(layoutInflater)
 
         return binding.root
     }
@@ -64,10 +69,14 @@ class AudioPlayerFragment : Fragment() {
         super.onPause()
         viewModel.pausePlayer()
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requireActivity().requestedOrientation = viewModel.getActivityOrientation()
     }
 
 

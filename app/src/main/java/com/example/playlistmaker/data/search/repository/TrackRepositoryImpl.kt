@@ -43,7 +43,7 @@ class TrackRepositoryImpl(
                         it.releaseDate?.substringBefore('-') ?: "-",//Передаем только год
                         it.primaryGenreName ?: "-",
                         it.country ?: "-",
-                        it.previewUrl,
+                        it.previewUrl ?: "-",
                     )
                 })
             }

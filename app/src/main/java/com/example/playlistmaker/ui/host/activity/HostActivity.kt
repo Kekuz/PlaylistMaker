@@ -7,7 +7,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityHostBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHostBinding

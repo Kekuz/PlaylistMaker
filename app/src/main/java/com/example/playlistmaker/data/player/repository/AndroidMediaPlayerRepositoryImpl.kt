@@ -70,6 +70,7 @@ class AndroidMediaPlayerRepositoryImpl(
     }
 
     override fun getCurrentPosition(): String {
+        //TODO: Для этого моментика надо свой таймер сделать, а то это какая то шляпа
         return dateFormat.format(mediaPlayer.currentPosition)
     }
 }

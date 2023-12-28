@@ -13,8 +13,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaFragment : Fragment() {
-    private lateinit var binding: FragmentMediaBinding
-    private lateinit var tabMediator: TabLayoutMediator
+    private var _binding: FragmentMediaBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<MediaViewModel>()
 
     override fun onCreateView(
@@ -22,7 +22,7 @@ class MediaFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMediaBinding.inflate(layoutInflater)
+        _binding = FragmentMediaBinding.inflate(layoutInflater)
 
         return binding.root
     }
@@ -39,5 +39,10 @@ class MediaFragment : Fragment() {
         }.attach()
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentSettingsBinding
-import com.example.playlistmaker.domain.settings.models.ThemeSettings
 import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
-    private lateinit var binding: FragmentSettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
@@ -19,14 +19,14 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSettingsBinding.inflate(layoutInflater)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.themeSwitcher.isChecked = viewModel.getSettingsInteractor().getSettings().isNightMode
+        binding.themeSwitcher.isChecked = viewModel.getNightMode()
 
         bindingClickListeners()
         bindingThemeSwitcher()
@@ -34,24 +34,29 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun bindingClickListeners() = with(binding) {
         shareAppFl.setOnClickListener {
-            viewModel.getSharingInteractor().shareApp()
+            viewModel.shareApp()
         }
 
         writeToSupportFl.setOnClickListener {
-            viewModel.getSharingInteractor().openSupport()
+            viewModel.openSupport()
         }
 
         userAgreementFl.setOnClickListener {
-            viewModel.getSharingInteractor().openTerms()
+            viewModel.openTerms()
         }
     }
 
     private fun bindingThemeSwitcher() = with(binding) {
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.getSettingsInteractor().saveSettings(ThemeSettings(checked))
-            viewModel.getSettingsInteractor().changeTheme()
+            viewModel.saveNightMode(checked)
+            viewModel.changeTheme()
         }
     }
 }
