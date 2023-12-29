@@ -38,10 +38,13 @@ class AudioPlayerFragment : Fragment() {
         )
     }
 
+    private var _activityOrientation : Int? = null
+    private val activityOrientation get() = _activityOrientation!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.setActivityOrientation(requireActivity().requestedOrientation)
+        _activityOrientation = requireActivity().requestedOrientation
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -76,7 +79,7 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        requireActivity().requestedOrientation = viewModel.getActivityOrientation()
+        requireActivity().requestedOrientation = activityOrientation
     }
 
 

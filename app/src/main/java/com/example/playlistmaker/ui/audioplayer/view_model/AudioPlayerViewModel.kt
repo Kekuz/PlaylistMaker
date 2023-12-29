@@ -24,12 +24,6 @@ class AudioPlayerViewModel(
 
     private val playerView = PlayerView(CURRENT_TIME_ZERO, false)
 
-    private var activityOrientation : Int? = null
-    fun setActivityOrientation(orientation: Int) {
-        activityOrientation = orientation
-    }
-    fun getActivityOrientation(): Int = activityOrientation!!
-
     init {
         preparePlayer()
     }
