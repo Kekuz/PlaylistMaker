@@ -2,7 +2,6 @@ package com.example.playlistmaker.ui.audioplayer.view_model
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -53,6 +52,14 @@ class AudioPlayerViewModel(
         mediaPlayerInteractor.releasePlayer()
     }
 
+    private fun trackEndingCheck(){
+        mediaPlayerInteractor.trackEndingCheck{
+            playerView.playTime = CURRENT_TIME_ZERO
+            playerView.playPicture = false
+            stateLiveData.value = AudioPlayerViewState.Player(playerView)
+        }
+    }
+
     fun playBackControl(){
         mediaPlayerInteractor.playbackControl {
             playerButtonStateChanger(it)
@@ -66,8 +73,9 @@ class AudioPlayerViewModel(
                 val currentTimer = mediaPlayerInteractor.getCurrentPosition()
                 playerView.playTime = currentTimer
                 stateLiveData.value = AudioPlayerViewState.Player(playerView)
-                handler.postDelayed(this, TIMER_REFRESH_DELAY_MILLIS)
-                Log.d("Timer", currentTimer)
+                trackEndingCheck()
+                handler.postDelayed(this, mediaPlayerInteractor.getTimerRefreshDelayMillis())
+                //Log.d("Timer", currentTimer)
             }
         }
     }
@@ -84,7 +92,6 @@ class AudioPlayerViewModel(
                 playerView.playPicture = false
                 stateLiveData.value = AudioPlayerViewState.Player(playerView)
                 handler.removeCallbacks(trackTimerRunnable)
-
             }
 
             PlayerStates.STATE_DEFAULT -> {
@@ -94,7 +101,6 @@ class AudioPlayerViewModel(
     }
 
     companion object {
-        const val TIMER_REFRESH_DELAY_MILLIS = 250L
         const val CURRENT_TIME_ZERO = "0:00"
     }
 

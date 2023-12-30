@@ -17,4 +17,8 @@ interface MediaPlayerInteractor {
 
     fun getCurrentPosition(): String
 
+    fun trackEndingCheck(consumer: () -> Unit)
+
+    fun getTimerRefreshDelayMillis(): Long
+
 }

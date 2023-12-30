@@ -30,4 +30,11 @@ class MediaPlayerInteractorImpl(
     override fun getCurrentPosition(): String {
         return mediaPlayerRepository.getCurrentPosition()
     }
+
+    override fun trackEndingCheck(consumer: () -> Unit) {
+        return mediaPlayerRepository.trackEndingCheck(consumer)
+    }
+
+    override fun getTimerRefreshDelayMillis(): Long =
+        mediaPlayerRepository.getTimerRefreshDelayMillis()
 }

@@ -16,6 +16,8 @@ class AndroidMediaPlayerRepositoryImpl(
 
     private var playerState = PlayerStates.STATE_DEFAULT
 
+    private var timeInMillis = -TIMER_REFRESH_DELAY_MILLIS
+
     private val dateFormat = SimpleDateFormat("m:ss", Locale.getDefault())
 
     override fun prepareMediaPlayer(consumer: () -> Unit) {
@@ -23,11 +25,13 @@ class AndroidMediaPlayerRepositoryImpl(
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             playerState = PlayerStates.STATE_PREPARED
+            timeInMillis = -TIMER_REFRESH_DELAY_MILLIS
             Log.d("State", "prepared")
         }
         mediaPlayer.setOnCompletionListener {
             playerState = PlayerStates.STATE_PREPARED
             Log.d("State", "prepared")
+            timeInMillis = -TIMER_REFRESH_DELAY_MILLIS
             consumer.invoke()
         }
     }
@@ -42,6 +46,20 @@ class AndroidMediaPlayerRepositoryImpl(
         mediaPlayer.pause()
         playerState = PlayerStates.STATE_PAUSED
         Log.d("State", "pause")
+    }
+
+    //А все потому, что у медиа плеера возникает баг, при котором
+    //обнуляется время и трек не заканчиавется когда нужно.
+    //По этой причине мы тут время сами считаем -_-
+    override fun trackEndingCheck(consumer: () -> Unit) {
+        if (timeInMillis > mediaPlayer.duration) {
+            mediaPlayer.pause()
+            mediaPlayer.seekTo(0)
+            playerState = PlayerStates.STATE_PAUSED
+            timeInMillis = -TIMER_REFRESH_DELAY_MILLIS
+            consumer.invoke()
+            Log.d("State", "restart")
+        }
     }
 
     override fun playbackControl(consumer: (PlayerStates) -> Unit) {
@@ -70,7 +88,13 @@ class AndroidMediaPlayerRepositoryImpl(
     }
 
     override fun getCurrentPosition(): String {
-        //TODO: Для этого моментика надо свой таймер сделать, а то это какая то шляпа
-        return dateFormat.format(mediaPlayer.currentPosition)
+        timeInMillis += TIMER_REFRESH_DELAY_MILLIS
+        return dateFormat.format(timeInMillis)
+    }
+
+    override fun getTimerRefreshDelayMillis(): Long = TIMER_REFRESH_DELAY_MILLIS
+
+    companion object {
+        const val TIMER_REFRESH_DELAY_MILLIS = 250L
     }
 }
