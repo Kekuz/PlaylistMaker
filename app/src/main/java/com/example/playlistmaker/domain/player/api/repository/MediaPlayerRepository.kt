@@ -17,4 +17,8 @@ interface MediaPlayerRepository {
     fun isPlayerStatePlaying():Boolean
 
     fun getCurrentPosition(): String
+
+    fun trackEndingCheck(consumer: () -> Unit)
+
+    fun getTimerRefreshDelayMillis(): Long
 }

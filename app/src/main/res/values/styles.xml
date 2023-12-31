@@ -34,13 +34,27 @@
         <item name="android:titleTextAppearance">@style/title_text_style</item>
     </style>
 
-    <style name="toolbar_style">
+    <style name="player_toolbar_style">
         <item name="android:navigationIcon">@drawable/back_arrow_24</item>
+        <item name="android:titleTextAppearance">@style/title_text_style</item>
+    </style>
+
+    <style name="toolbar_style">
         <item name="android:titleTextAppearance">@style/title_text_style</item>
     </style>
 
     <style name="background_color">
         <item name="android:background">@color/yp_white</item>
+    </style>
+
+    <style name="bottom_navigation">
+        <item name="itemTextAppearanceInactive">@style/MyBottomNavigationView</item>
+        <item name="itemTextAppearanceActive">@style/MyBottomNavigationView</item>
+        <item name="android:background">@color/yp_white</item>
+        <item name="elevation">0dp</item>
+        <item name="itemRippleColor">@color/yp_ripple_blue</item>
+        <item name="itemTextColor">@color/bottom_navigation_items_color</item>
+        <item name="itemIconTint">@color/bottom_navigation_items_color</item>
     </style>
 
 </resources>

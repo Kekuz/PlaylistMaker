@@ -5,7 +5,7 @@
     style="@style/background_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.audioplayer.activity.AudioPlayerActivity">
+    tools:context=".ui.audioplayer.fragment.AudioPlayerFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -37,7 +37,7 @@
 
     <Toolbar
         android:id="@+id/audio_player_tool_bar"
-        style="@style/toolbar_style"
+        style="@style/player_toolbar_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

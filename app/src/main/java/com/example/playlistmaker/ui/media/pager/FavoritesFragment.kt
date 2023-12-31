@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.media.fragment
+package com.example.playlistmaker.ui.media.pager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,17 +9,23 @@ import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.ui.media.view_model.FavouritesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavouritesFragment: Fragment() {
+class FavoritesFragment: Fragment() {
 
-    private lateinit var binding: FragmentFavoritesBinding
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<FavouritesViewModel>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
-        fun newInstance(): FavouritesFragment = FavouritesFragment()
+        fun newInstance(): FavoritesFragment = FavoritesFragment()
     }
 }
