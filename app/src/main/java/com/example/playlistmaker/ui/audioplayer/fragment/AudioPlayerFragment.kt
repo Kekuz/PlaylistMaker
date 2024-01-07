@@ -72,6 +72,13 @@ class AudioPlayerFragment : Fragment() {
         super.onPause()
         viewModel.pausePlayer()
     }
+
+    override fun onResume() {
+        super.onResume()
+        //Плеер обычно ставится на паузу когда проходит resume
+        //потому интерфейс обновляем
+        binding.playButton.setImageResource(R.drawable.audio_player_play_button)
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
