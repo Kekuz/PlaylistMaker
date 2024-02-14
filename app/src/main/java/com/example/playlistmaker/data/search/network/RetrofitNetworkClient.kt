@@ -13,8 +13,8 @@ import java.lang.Exception
 class RetrofitNetworkClient(
     private val context: Context,
     private val iTunesService: ITunesAPI,
-): NetworkClient {
-    override fun doRequest(dto: Any): TrackResponse {
+) : NetworkClient {
+    override suspend fun doRequest(dto: Any): TrackResponse {
         if (!isConnected()) {
             return TrackResponse().apply { resultCode = -1 }
         }
@@ -22,13 +22,13 @@ class RetrofitNetworkClient(
             return TrackResponse().apply { resultCode = 400 }
         }
         return try {
-            val resp = iTunesService.search(dto.term).execute()
-            val body = resp.body() ?: TrackResponse()
-            body.apply {
-                resultCode = resp.code()
+            val resp = iTunesService.search(dto.term)
+            //val body = resp.body() ?: TrackResponse()
+            resp.apply {
+                resultCode = 200
             }
-        } catch (e:Exception){
-            TrackResponse().apply { resultCode = 400 }
+        } catch (e: Exception) {
+            TrackResponse().apply { resultCode = 500 }
         }
     }
 

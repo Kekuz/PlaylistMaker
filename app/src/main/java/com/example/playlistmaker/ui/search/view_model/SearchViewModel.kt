@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.api.interactor.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.api.interactor.TrackInteractor
 import com.example.playlistmaker.domain.search.models.Track
@@ -13,6 +14,7 @@ import com.example.playlistmaker.ui.search.models.SearchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -67,8 +69,11 @@ class SearchViewModel(
     private fun doRequest(text: String) {
         if (text.isNotEmpty()) {
             stateLiveData.postValue(SearchState.Loading)
-            trackInteractor.searchTrack(text) { foundTracksResource, errorMessage ->
-                CoroutineScope(Dispatchers.IO).launch {
+
+            viewModelScope.launch {
+                trackInteractor.searchTrack(text).collect{
+                    val foundTracksResource = it.first
+                    val errorMessage = it.second
                     if (foundTracksResource != null) {
                         Log.d("Response", foundTracksResource.toString())
                         if (foundTracksResource.isNotEmpty()) {
