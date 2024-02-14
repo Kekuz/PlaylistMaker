@@ -13,6 +13,7 @@ import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.search.models.SearchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,20 +26,25 @@ class SearchViewModel(
     private var lastRequest = ""
     private var isClickAllowed = true
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable {
-        doRequest(lastRequest)
-    }
+    private var searchJob: Job? = null
 
     private val stateLiveData = MutableLiveData<SearchState>()
 
     fun observeState(): LiveData<SearchState> = stateLiveData
 
+    override fun onCleared() {
+        super.onCleared()
+        searchJob?.cancel()
+    }
+
     fun searchDebounce(request: String) {
-        if(lastRequest != request){// это чтобы когда мы возвращались на фрагмент, он заново не искал
+        if (lastRequest != request) {// это чтобы когда мы возвращались на фрагмент, он заново не искал
             lastRequest = request
-            handler.removeCallbacks(searchRunnable)
-            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                doRequest(lastRequest)
+            }
         }
     }
 
@@ -46,7 +52,10 @@ class SearchViewModel(
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewModelScope.launch{
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
@@ -54,7 +63,7 @@ class SearchViewModel(
     fun atOnceRequest(request: String) {
         lastRequest = request
         doRequest(request)
-        handler.removeCallbacks(searchRunnable)
+        searchJob?.cancel()
     }
 
     fun reloadRequest() {
@@ -71,7 +80,7 @@ class SearchViewModel(
             stateLiveData.postValue(SearchState.Loading)
 
             viewModelScope.launch {
-                trackInteractor.searchTrack(text).collect{
+                trackInteractor.searchTrack(text).collect {
                     val foundTracksResource = it.first
                     val errorMessage = it.second
                     if (foundTracksResource != null) {
