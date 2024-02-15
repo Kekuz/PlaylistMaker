@@ -9,6 +9,8 @@ import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
 import com.example.playlistmaker.domain.search.models.Resource
 import com.example.playlistmaker.domain.search.models.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -20,16 +22,16 @@ class TrackRepositoryImpl(
     private val dateFormat =
         SimpleDateFormat("mm:ss", Locale.getDefault())
 
-    override fun search(term: String): Resource<List<Track>> {
+    override fun search(term: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(term))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error(context.getString(R.string.internet_problems))
+                emit(Resource.Error(context.getString(R.string.internet_problems)))
             }
 
             200 -> {
                 Log.d("Tracks", (response as TrackSearchResponse).results.toString())
-                Resource.Success((response).results.map {
+                emit(Resource.Success((response).results.map {
                     Track(
                         it.trackName ?: "no name",
                         it.artistName ?: "no artist",
@@ -45,11 +47,11 @@ class TrackRepositoryImpl(
                         it.country ?: "-",
                         it.previewUrl ?: "-",
                     )
-                })
+                }))
             }
 
             else -> {
-                Resource.Error(context.getString(R.string.server_error))
+                emit(Resource.Error(context.getString(R.string.server_error)))
             }
         }
     }
