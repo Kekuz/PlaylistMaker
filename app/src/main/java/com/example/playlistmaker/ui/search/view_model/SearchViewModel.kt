@@ -1,7 +1,5 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -23,7 +20,7 @@ class SearchViewModel(
     private val trackInteractor: TrackInteractor,
 ) : ViewModel() {
 
-    private var lastRequest = ""
+    private var searchQuery = ""
     private var isClickAllowed = true
 
     private var searchJob: Job? = null
@@ -38,12 +35,12 @@ class SearchViewModel(
     }
 
     fun searchDebounce(request: String) {
-        if (lastRequest != request) {// это чтобы когда мы возвращались на фрагмент, он заново не искал
-            lastRequest = request
+        if (searchQuery != request) {// это чтобы когда мы возвращались на фрагмент, он заново не искал
+            searchQuery = request
             searchJob?.cancel()
             searchJob = viewModelScope.launch {
                 delay(SEARCH_DEBOUNCE_DELAY)
-                doRequest(lastRequest)
+                doRequest(searchQuery)
             }
         }
     }
@@ -61,7 +58,7 @@ class SearchViewModel(
     }
 
     fun atOnceRequest(request: String) {
-        lastRequest = request
+        searchQuery = request
         doRequest(request)
         searchJob?.cancel()
     }
@@ -70,7 +67,7 @@ class SearchViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             //Это чтобы было понятно что пользователь без интернета обновляет страницу
             delay(500)
-            doRequest(lastRequest)
+            doRequest(searchQuery)
         }
 
     }
@@ -92,7 +89,7 @@ class SearchViewModel(
                         }
                     } else if (errorMessage != null) {
                         stateLiveData.postValue(SearchState.Error(errorMessage))
-                        lastRequest = text
+                        searchQuery = text
                     }
                 }
             }

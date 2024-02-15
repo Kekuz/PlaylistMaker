@@ -23,7 +23,6 @@ class RetrofitNetworkClient(
         }
         return try {
             val resp = iTunesService.search(dto.term)
-            //val body = resp.body() ?: TrackResponse()
             resp.apply {
                 resultCode = 200
             }
