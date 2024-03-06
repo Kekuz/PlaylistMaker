@@ -2,6 +2,10 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.playlistmaker.data.favorites.DatabaseClient
+import com.example.playlistmaker.data.favorites.database.RoomDatabaseClient
+import com.example.playlistmaker.data.favorites.database.TrackDatabase
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.SearchHistoryStorage
 import com.example.playlistmaker.data.search.network.ITunesAPI
@@ -26,6 +30,17 @@ val dataModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesAPI::class.java)
+    }
+
+    single<TrackDatabase> {
+        Room.databaseBuilder(
+            androidContext(),
+            TrackDatabase::class.java, "track-database"
+        ).build()
+    }
+
+    single<DatabaseClient> {
+        RoomDatabaseClient(get())
     }
 
     single<NetworkClient> {
