@@ -16,6 +16,7 @@ class FavoritesInteractorImpl(private val databaseRepository: DatabaseRepository
         databaseRepository.delete(track)
     }
 
+    //TODO Сортировочка по id надо сделать по-другому
     override fun getFavorites(): Flow<List<Track>> {
         return databaseRepository.getTracks().map {list ->
             list.sortedBy { track -> track.trackId }

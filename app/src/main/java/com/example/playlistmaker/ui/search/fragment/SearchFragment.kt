@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
@@ -20,6 +21,9 @@ import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.fragment.AudioPlayerFragment
 import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -37,15 +41,20 @@ class SearchFragment : Fragment() {
     private val onClick: (Track) -> Unit =
         {
             if (viewModel.clickDebounce()) {
-                if (it.previewUrl != null) {
+                if (it.previewUrl != "-") {
                     Log.d("Track opened", it.toString())
-                    viewModel.addToHistory(it)
+                    lifecycleScope.launch { viewModel.addToHistory(it) }
                     findNavController().navigate(
                         R.id.action_searchFragment_to_audioPlayerFragment,
-                        AudioPlayerFragment.createArgs(it))
+                        AudioPlayerFragment.createArgs(it)
+                    )
                     historyAdapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.no_music_on_server), Toast.LENGTH_LONG)
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_music_on_server),
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
             }
@@ -92,9 +101,13 @@ class SearchFragment : Fragment() {
     private fun bindAdapters() = with(binding) {
         trackRv.adapter = trackAdapter
 
-        history = viewModel.getHistory()
-        historyAdapter = TrackAdapter(history, onClick)
-        historyRv.adapter = historyAdapter
+        lifecycleScope.launch{
+            history = viewModel.getHistory()
+            historyAdapter = TrackAdapter(history, onClick)
+            withContext(Dispatchers.Main){
+                historyRv.adapter = historyAdapter
+            }
+        }
     }
 
     private fun bindButtons() = with(binding) {
@@ -136,7 +149,7 @@ class SearchFragment : Fragment() {
 
     private fun bindHistoryShowing() = with(binding) {
         inputEt.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && inputEt.text.isEmpty() && viewModel.getHistory().isNotEmpty()) {
+            if (hasFocus && inputEt.text.isEmpty() /*&& viewModel.getHistory().isNotEmpty()*/) {
                 historySv.isVisible = true
                 clearHistoryBtn.isVisible = true
             } else {

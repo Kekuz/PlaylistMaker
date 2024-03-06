@@ -25,17 +25,14 @@ const val IS_NIGHT = "is_night"
 val dataModule = module {
 
     single<ITunesAPI> {
-        Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        Retrofit.Builder().baseUrl("https://itunes.apple.com")
+            .addConverterFactory(GsonConverterFactory.create()).build()
             .create(ITunesAPI::class.java)
     }
 
     single<TrackDatabase> {
         Room.databaseBuilder(
-            androidContext(),
-            TrackDatabase::class.java, "track-database"
+            androidContext(), TrackDatabase::class.java, "track-database"
         ).build()
     }
 
@@ -48,7 +45,7 @@ val dataModule = module {
     }
 
     single<SearchHistoryStorage> {
-        SharedPrefsSearchHistoryStorage(androidContext())
+        SharedPrefsSearchHistoryStorage(androidContext(), get())
     }
 
     single<ExternalNavigator> {
