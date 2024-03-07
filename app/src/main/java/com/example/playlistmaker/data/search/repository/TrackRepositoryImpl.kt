@@ -40,20 +40,20 @@ class TrackRepositoryImpl(
                 Log.d("Tracks", (response as TrackSearchResponse).results.toString())
                 emit(Resource.Success((response).results.map {
                     Track(
-                        it.trackName ?: "no name",
-                        it.artistName ?: "no artist",
-                        dateFormat.format(it.trackTimeMillis ?: 0),
-                        it.artworkUrl100 ?: "null",
-                        it.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") ?: "null",
-                        it.trackId ?: 0,
+                        trackName = it.trackName ?: "no name",
+                        artistName = it.artistName ?: "no artist",
+                        trackTime = dateFormat.format(it.trackTimeMillis ?: 0),
+                        artworkUrl100 = it.artworkUrl100 ?: "null",
+                        artworkUrl512 = it.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") ?: "null",
+                        trackId = it.trackId ?: 0,
                         //В задании написано: "Показывать название альбома (collectionName) (если есть)"
                         //iTunes при отсутствии альбома возвращает название трека + " - Single", соответсвенно такую строку мы убираем
-                        checkSingle(it.collectionName),
-                        it.releaseDate?.substringBefore('-') ?: "-",//Передаем только год
-                        it.primaryGenreName ?: "-",
-                        it.country ?: "-",
-                        it.previewUrl ?: "-",
-                        checkFavorite(it.trackId ?: -1),
+                        collectionName = checkSingle(it.collectionName),
+                        releaseYear = it.releaseDate?.substringBefore('-') ?: "-",//Передаем только год
+                        primaryGenreName = it.primaryGenreName ?: "-",
+                        country = it.country ?: "-",
+                        previewUrl = it.previewUrl ?: "-",
+                        isFavorite = checkFavorite(it.trackId ?: -1),
                     )
                 }))
             }

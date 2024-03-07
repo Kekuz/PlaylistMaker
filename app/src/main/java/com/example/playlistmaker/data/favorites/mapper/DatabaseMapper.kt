@@ -8,6 +8,7 @@ object DatabaseMapper {
     fun map(track: Track): TrackDatabaseEntity = with(track) {
         return TrackDatabaseEntity(
             id = trackId,
+            timeCreated = System.currentTimeMillis(),
             trackName = trackName,
             artistName = artistName,
             trackTime = trackTime,
@@ -33,6 +34,7 @@ object DatabaseMapper {
             releaseYear = releaseYear,
             primaryGenreName = primaryGenreName,
             country = country,
+            timeCreated = timeCreated,
             previewUrl = previewUrl,
         )
     }

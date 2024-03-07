@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.domain.favorites.impl
 
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.domain.favorites.api.repository.DatabaseRepository
@@ -16,10 +16,9 @@ class FavoritesInteractorImpl(private val databaseRepository: DatabaseRepository
         databaseRepository.delete(track)
     }
 
-    //TODO Сортировочка по id надо сделать по-другому
     override fun getFavorites(): Flow<List<Track>> {
-        return databaseRepository.getTracks().map {list ->
-            list.sortedBy { track -> track.trackId }
+        return databaseRepository.getTracks().map { list ->
+            list.sortedByDescending { track -> track.timeCreated }
         }
     }
 

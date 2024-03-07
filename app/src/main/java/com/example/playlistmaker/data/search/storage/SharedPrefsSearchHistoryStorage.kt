@@ -28,7 +28,7 @@ class SharedPrefsSearchHistoryStorage(
 
         val itemsListType: Type = object : TypeToken<MutableList<Track?>?>() {}.type
 
-        return gson.fromJson<List<Track>?>(json, itemsListType).map { track ->
+        return (gson.fromJson<List<Track>?>(json, itemsListType) ?: emptyList()).map { track ->
             track.apply {
                 Log.d("Track in favorites", "${track.trackName} ${checkFavorite(this.trackId)}")
                 isFavorite = checkFavorite(this.trackId)

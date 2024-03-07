@@ -93,6 +93,11 @@ class SearchFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.reloadRequest()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -101,10 +106,10 @@ class SearchFragment : Fragment() {
     private fun bindAdapters() = with(binding) {
         trackRv.adapter = trackAdapter
 
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             history = viewModel.getHistory()
             historyAdapter = TrackAdapter(history, onClick)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 historyRv.adapter = historyAdapter
             }
         }
@@ -149,7 +154,7 @@ class SearchFragment : Fragment() {
 
     private fun bindHistoryShowing() = with(binding) {
         inputEt.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && inputEt.text.isEmpty() /*&& viewModel.getHistory().isNotEmpty()*/) {
+            if (hasFocus && inputEt.text.isEmpty() && history.isNotEmpty()) {
                 historySv.isVisible = true
                 clearHistoryBtn.isVisible = true
             } else {
