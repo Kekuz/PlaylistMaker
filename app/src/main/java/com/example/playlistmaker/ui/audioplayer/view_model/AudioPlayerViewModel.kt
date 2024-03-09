@@ -5,15 +5,19 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
+import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     private val track: Track,
     private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -32,6 +36,18 @@ class AudioPlayerViewModel(
         super.onCleared()
     }
 
+    fun onFavoriteClick() {
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                favoritesInteractor.deleteFavorite(track)
+            } else {
+                favoritesInteractor.saveFavorite(track)
+            }
+        }
+        track.isFavorite = !track.isFavorite
+        loadView()
+    }
+
     fun loadView() {
         stateLiveData.value = AudioPlayerViewState.Content(track, playerView)
     }
@@ -44,7 +60,7 @@ class AudioPlayerViewModel(
         }
     }
 
-    fun pausePlayer(){
+    fun pausePlayer() {
         mediaPlayerInteractor.pausePlayer()
     }
 
@@ -52,15 +68,15 @@ class AudioPlayerViewModel(
         mediaPlayerInteractor.releasePlayer()
     }
 
-    private fun trackEndingCheck(){
-        mediaPlayerInteractor.trackEndingCheck{
+    private fun trackEndingCheck() {
+        mediaPlayerInteractor.trackEndingCheck {
             playerView.playTime = CURRENT_TIME_ZERO
             playerView.playPicture = false
             stateLiveData.value = AudioPlayerViewState.Player(playerView)
         }
     }
 
-    fun playBackControl(){
+    fun playBackControl() {
         mediaPlayerInteractor.playbackControl {
             playerButtonStateChanger(it)
         }

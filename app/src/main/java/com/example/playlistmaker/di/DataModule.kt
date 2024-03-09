@@ -2,6 +2,10 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.playlistmaker.data.favorites.DatabaseClient
+import com.example.playlistmaker.data.favorites.database.RoomDatabaseClient
+import com.example.playlistmaker.data.favorites.database.TrackDatabase
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.SearchHistoryStorage
 import com.example.playlistmaker.data.search.network.ITunesAPI
@@ -21,11 +25,19 @@ const val IS_NIGHT = "is_night"
 val dataModule = module {
 
     single<ITunesAPI> {
-        Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        Retrofit.Builder().baseUrl("https://itunes.apple.com")
+            .addConverterFactory(GsonConverterFactory.create()).build()
             .create(ITunesAPI::class.java)
+    }
+
+    single<TrackDatabase> {
+        Room.databaseBuilder(
+            androidContext(), TrackDatabase::class.java, "track-database"
+        ).build()
+    }
+
+    single<DatabaseClient> {
+        RoomDatabaseClient(get())
     }
 
     single<NetworkClient> {
@@ -33,7 +45,7 @@ val dataModule = module {
     }
 
     single<SearchHistoryStorage> {
-        SharedPrefsSearchHistoryStorage(androidContext())
+        SharedPrefsSearchHistoryStorage(androidContext(), get())
     }
 
     single<ExternalNavigator> {

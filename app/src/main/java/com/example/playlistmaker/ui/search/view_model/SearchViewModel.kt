@@ -9,6 +9,7 @@ import com.example.playlistmaker.domain.search.api.interactor.SearchHistoryInter
 import com.example.playlistmaker.domain.search.api.interactor.TrackInteractor
 import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.search.models.SearchState
+import com.example.playlistmaker.ui.util.Debounce
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,13 +22,15 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private var searchQuery = ""
-    private var isClickAllowed = true
 
     private var searchJob: Job? = null
 
     private val stateLiveData = MutableLiveData<SearchState>()
 
     fun observeState(): LiveData<SearchState> = stateLiveData
+
+    private val debounce = Debounce()
+
 
     override fun onCleared() {
         super.onCleared()
@@ -45,17 +48,8 @@ class SearchViewModel(
         }
     }
 
-    fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewModelScope.launch{
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }
+    fun clickDebounce(): Boolean = debounce.clickDebounce()
+
 
     fun atOnceRequest(request: String) {
         searchQuery = request
@@ -96,11 +90,11 @@ class SearchViewModel(
         }
     }
 
-    fun addToHistory(track: Track) {
+    suspend fun addToHistory(track: Track) {
         searchHistoryInteractor.addToTrackHistory(track)
     }
 
-    fun getHistory(): List<Track> {
+    suspend fun getHistory(): List<Track> {
         return searchHistoryInteractor.getTrackHistory()
     }
 
@@ -110,7 +104,5 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-
     }
 }

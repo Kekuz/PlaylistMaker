@@ -3,23 +3,28 @@ package com.example.playlistmaker.domain.search.impl
 import com.example.playlistmaker.domain.search.api.interactor.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.api.repository.SearchHistoryRepository
 import com.example.playlistmaker.domain.search.models.Track
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     SearchHistoryInteractor {
 
-    private val tracks = repository.getTracksFromStorage().toMutableList()
-
-    override fun getTrackHistory(): List<Track> {
-        return tracks
+    //TODO если в поиске полайкать записи, то они несколько раз добавятся в историю
+    override suspend fun getTrackHistory(): List<Track> {
+        return CoroutineScope(Dispatchers.IO).async {
+            repository.getTracksFromStorage().toMutableList()
+        }.await()
     }
 
-    override fun addToTrackHistory(track: Track) {
-        tracks.addToTrackArray(track)
-        repository.putTracksToStorage(tracks)
+    override suspend fun addToTrackHistory(track: Track) {
+        val temp = getTrackHistory().toMutableList()
+        temp.addToTrackArray(track)
+        repository.putTracksToStorage(temp)
     }
 
     override fun clearTrackHistory() {
-        tracks.clear()
         repository.putTracksToStorage(listOf())
     }
 
@@ -27,7 +32,7 @@ class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepositor
         var alreadyInside = false
 
         for (x in this) {
-            if (x == track) alreadyInside = true
+            if (x.trackId == track.trackId) alreadyInside = true
         }
 
         if (alreadyInside) remove(track)
