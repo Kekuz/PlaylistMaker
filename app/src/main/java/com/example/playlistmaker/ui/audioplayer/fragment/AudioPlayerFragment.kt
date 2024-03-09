@@ -1,8 +1,10 @@
 package com.example.playlistmaker.ui.audioplayer.fragment
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -143,7 +145,7 @@ class AudioPlayerFragment : Fragment() {
             .load(artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
-            .transform(RoundedCorners(TRACK_ICON_CORNER_RADIUS))
+            .transform(RoundedCorners(dpToPx(TRACK_ICON_CORNER_RADIUS, requireContext())))
             .into(binding.artworkUrl100)
     }
 
@@ -156,8 +158,16 @@ class AudioPlayerFragment : Fragment() {
             playButton.setImageResource(R.drawable.audio_player_play_button)
     }
 
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
     companion object {
-        private const val TRACK_ICON_CORNER_RADIUS = 30
+        private const val TRACK_ICON_CORNER_RADIUS = 8f
         private const val ARGS_TRACK = "track"
 
         fun createArgs(track: Track): Bundle =

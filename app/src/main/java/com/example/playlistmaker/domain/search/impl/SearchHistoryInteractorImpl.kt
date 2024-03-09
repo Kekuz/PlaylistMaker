@@ -32,7 +32,7 @@ class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepositor
         var alreadyInside = false
 
         for (x in this) {
-            if (x == track) alreadyInside = true
+            if (x.trackId == track.trackId) alreadyInside = true
         }
 
         if (alreadyInside) remove(track)

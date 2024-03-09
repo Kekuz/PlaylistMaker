@@ -1,11 +1,9 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.data.favorites.repository.DatabaseRepositoryImpl
 import com.example.playlistmaker.data.player.repository.AndroidMediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.search.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.search.repository.TrackRepositoryImpl
 import com.example.playlistmaker.data.settings.repository.SettingsRepositoryImpl
-import com.example.playlistmaker.domain.favorites.api.repository.DatabaseRepository
 import com.example.playlistmaker.domain.player.api.repository.MediaPlayerRepository
 import com.example.playlistmaker.domain.search.api.repository.SearchHistoryRepository
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
@@ -29,9 +27,5 @@ val repositoryModule = module {
 
     factory<MediaPlayerRepository> {
         AndroidMediaPlayerRepositoryImpl(get(), get())
-    }
-
-    single<DatabaseRepository> {
-        DatabaseRepositoryImpl(get())
     }
 }

@@ -21,7 +21,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        SearchViewModel(get(), get(), get())
+        SearchViewModel(get(), get())
     }
 
     viewModel {
@@ -29,7 +29,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoritesViewModel(get(), get())
+        FavoritesViewModel(get())
     }
 
 }

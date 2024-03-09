@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val searchHistoryInteractor: SearchHistoryInteractor,
     private val trackInteractor: TrackInteractor,
-    private val debounce: Debounce,
 ) : ViewModel() {
 
     private var searchQuery = ""
@@ -29,6 +28,9 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<SearchState>()
 
     fun observeState(): LiveData<SearchState> = stateLiveData
+
+    private val debounce = Debounce()
+
 
     override fun onCleared() {
         super.onCleared()

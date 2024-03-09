@@ -16,9 +16,9 @@ interface TrackDao {
     fun delete(track: TrackDatabaseEntity)
 
     @Query("SELECT * FROM track_database")
-    fun get(): List<TrackDatabaseEntity>?
+    fun get(): List<TrackDatabaseEntity>
 
     @Query("SELECT id FROM track_database")
-    fun getIds(): List<Int>?
+    fun getIds(): List<Int>
 
 }

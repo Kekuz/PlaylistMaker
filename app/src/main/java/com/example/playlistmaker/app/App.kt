@@ -1,7 +1,6 @@
 package com.example.playlistmaker.app
 
 import android.app.Application
-import com.example.playlistmaker.di.UIModuleModule
 import com.example.playlistmaker.di.dataModule
 import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.repositoryModule
@@ -18,7 +17,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule, UIModuleModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
 
         val settingsInteractor by inject<SettingsInteractor>()

@@ -14,15 +14,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
-    private val favoritesInteractor: FavoritesInteractor,
-    private val debounce: Debounce,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoritesState>()
     fun observeState(): LiveData<FavoritesState> = stateLiveData
 
-    fun clickDebounce(): Boolean = debounce.clickDebounce()
+    private val debounce = Debounce()
 
+    fun clickDebounce(): Boolean = debounce.clickDebounce()
 
 
     fun showFavorites() {

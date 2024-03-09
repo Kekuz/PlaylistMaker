@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.favorites.DatabaseClient
-import com.example.playlistmaker.data.favorites.database.RoomDatabaseClient
+import com.example.playlistmaker.data.favorites.mapper.DatabaseMapper
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.dto.TrackSearchRequest
 import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse
@@ -12,10 +12,8 @@ import com.example.playlistmaker.domain.search.api.repository.TrackRepository
 import com.example.playlistmaker.domain.search.models.Resource
 import com.example.playlistmaker.domain.search.models.Track
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -76,6 +74,19 @@ class TrackRepositoryImpl(
     private suspend fun checkFavorite(id: Int): Boolean = withContext(Dispatchers.IO) {
         return@withContext databaseClient.getIds().contains(id)
     }
+
+    override suspend fun save(track: Track) = withContext(Dispatchers.IO) {
+        databaseClient.save(DatabaseMapper.map(track))
+    }
+
+    override suspend fun delete(track: Track) = withContext(Dispatchers.IO) {
+        databaseClient.delete(DatabaseMapper.map(track))
+    }
+
+    override fun getTracks(): Flow<List<Track>> = flow {
+        emit(databaseClient.getTracks().map { DatabaseMapper.map(it) })
+    }
+
 
     companion object {
         private const val NO_ALBUM_SUBSTRING = " - Single"
