@@ -22,6 +22,7 @@ import com.example.playlistmaker.domain.search.models.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
+import com.example.playlistmaker.ui.util.Convert
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -145,7 +146,7 @@ class AudioPlayerFragment : Fragment() {
             .load(artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
-            .transform(RoundedCorners(dpToPx(TRACK_ICON_CORNER_RADIUS, requireContext())))
+            .transform(RoundedCorners(Convert.dpToPx(TRACK_ICON_CORNER_RADIUS, requireContext())))
             .into(binding.artworkUrl100)
     }
 
@@ -156,14 +157,6 @@ class AudioPlayerFragment : Fragment() {
             playButton.setImageResource(R.drawable.audio_player_pause_button)
         else
             playButton.setImageResource(R.drawable.audio_player_play_button)
-    }
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics
-        ).toInt()
     }
 
     companion object {

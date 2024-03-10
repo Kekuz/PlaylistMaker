@@ -35,5 +35,10 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="empty_playlists">Вы не создали ни одного плейлиста</string>
     <string name="empty_media">Ваша медиатека пуста</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name_">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
 
 </resources>

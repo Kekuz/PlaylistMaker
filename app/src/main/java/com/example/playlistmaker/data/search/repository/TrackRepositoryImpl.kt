@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.favorites.DatabaseClient
-import com.example.playlistmaker.data.favorites.mapper.DatabaseMapper
+import com.example.playlistmaker.data.mapper.DatabaseMapper
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.dto.TrackSearchRequest
 import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse

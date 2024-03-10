@@ -26,4 +26,6 @@
     <dimen name="audio_little_button">51dp</dimen>
     <dimen name="audio_big_button">100dp</dimen>
 
+    <dimen name="input_text_corner_radius">4dp</dimen>
+
 </resources>
