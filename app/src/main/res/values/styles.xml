@@ -71,7 +71,7 @@
     </style>
 
     <style name="add_playlist_bnt" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:backgroundTint">@color/yp_blue</item>
+        <item name="android:backgroundTint">@color/yp_text_gray</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:letterSpacing">0.04</item>
         <item name="android:textAllCaps">false</item>
@@ -80,6 +80,16 @@
         <item name="cornerRadius">@dimen/corner_radius</item>
         <item name="android:insetTop">2dp</item>
         <item name="android:insetBottom">2dp</item>
+    </style>
+
+    <style name="snackbar" parent="Widget.Material3.Snackbar">
+        <item name="android:backgroundTint">@color/yp_black</item>
+    </style>
+
+    <style name="snackbar_text_style">
+        <item name="android:textColor">@color/yp_white</item>
+        <item name="android:textSize">@dimen/little_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
 </resources>
