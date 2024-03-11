@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -37,6 +36,29 @@ import java.io.FileOutputStream
 class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
+
+
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                view?.let {
+                    Glide.with(it).load(uri)
+                        .centerCrop()
+                        .transform(
+                            RoundedCorners(
+                                Convert.dpToPx(
+                                    ROUNDED_CORNERS,
+                                    requireContext()
+                                )
+                            )
+                        )
+                        .into(binding.picture)
+                }
+                this.uri = uri
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
 
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -67,7 +89,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
         binding.ivAddPicture.setOnClickListener {
-            getPickMedia().launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.btnCreate.setOnClickListener {
@@ -105,29 +127,6 @@ class NewPlaylistFragment : Fragment() {
             makeDialog().show()
         } else {
             findNavController().navigateUp()
-        }
-    }
-
-    private fun getPickMedia(): ActivityResultLauncher<PickVisualMediaRequest> {
-        return registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                view?.let {
-                    Glide.with(it).load(uri)
-                        .centerCrop()
-                        .transform(
-                            RoundedCorners(
-                                Convert.dpToPx(
-                                    ROUNDED_CORNERS,
-                                    requireContext()
-                                )
-                            )
-                        )
-                        .into(binding.picture)
-                }
-                this.uri = uri
-            } else {
-                Log.d("PhotoPicker", "No media selected")
-            }
         }
     }
 
