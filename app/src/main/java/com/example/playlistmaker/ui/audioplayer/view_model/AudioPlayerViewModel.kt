@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import kotlinx.coroutines.launch

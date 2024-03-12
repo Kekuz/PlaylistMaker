@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import com.example.playlistmaker.data.favorites.DatabaseClient
 import com.example.playlistmaker.data.search.SearchHistoryStorage
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers

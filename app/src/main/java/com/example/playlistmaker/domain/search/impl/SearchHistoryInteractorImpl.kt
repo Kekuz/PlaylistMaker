@@ -2,11 +2,10 @@ package com.example.playlistmaker.domain.search.impl
 
 import com.example.playlistmaker.domain.search.api.interactor.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.api.repository.SearchHistoryRepository
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     SearchHistoryInteractor {

@@ -2,8 +2,8 @@ package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.data.favorites.database.model.TrackDatabaseEntity
 import com.example.playlistmaker.data.playlist.database.model.PlaylistDatabaseEntity
-import com.example.playlistmaker.domain.playlist.model.Playlist
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Playlist
+import com.example.playlistmaker.domain.model.Track
 
 object DatabaseMapper {
 
@@ -43,6 +43,16 @@ object DatabaseMapper {
 
     fun map(playlist: Playlist): PlaylistDatabaseEntity = with(playlist) {
         return PlaylistDatabaseEntity(
+            name = name,
+            description = description,
+            pathToCover = pathToCover,
+            trackIdsList = trackIdsList,
+            tracksCount = tracksCount,
+        )
+    }
+
+    fun map(playlistDatabaseEntity: PlaylistDatabaseEntity): Playlist = with(playlistDatabaseEntity) {
+        return Playlist(
             name = name,
             description = description,
             pathToCover = pathToCover,

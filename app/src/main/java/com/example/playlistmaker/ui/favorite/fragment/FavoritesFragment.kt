@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.media.pager
+package com.example.playlistmaker.ui.favorite.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -11,12 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.fragment.AudioPlayerFragment
 import com.example.playlistmaker.ui.media.models.FavoritesState
-import com.example.playlistmaker.ui.media.view_model.FavoritesViewModel
+import com.example.playlistmaker.ui.favorite.view_model.FavoritesViewModel
 import com.example.playlistmaker.ui.search.fragment.TrackAdapter
-import com.example.playlistmaker.ui.search.models.SearchState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesFragment : Fragment() {

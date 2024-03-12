@@ -4,7 +4,7 @@ import android.media.MediaPlayer
 import android.util.Log
 import com.example.playlistmaker.domain.player.api.repository.MediaPlayerRepository
 import com.example.playlistmaker.domain.player.models.PlayerStates
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

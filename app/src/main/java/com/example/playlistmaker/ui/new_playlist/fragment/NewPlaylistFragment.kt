@@ -23,7 +23,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.databinding.SnackbarViewBinding
-import com.example.playlistmaker.domain.playlist.model.Playlist
+import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
 import com.example.playlistmaker.ui.util.Convert
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -83,22 +83,25 @@ class NewPlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.name.addTextChangedListener(getTextWatcher())
+        bindOnClick(view)
+    }
 
-        binding.toolBar.setNavigationOnClickListener {
+    private fun bindOnClick(view: View) = with(binding) {
+        toolBar.setNavigationOnClickListener {
             showDialogOrNavigateBack()
         }
 
-        binding.ivAddPicture.setOnClickListener {
+        ivAddPicture.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        binding.btnCreate.setOnClickListener {
-            uri?.let { saveImageToPrivateStorage(it, binding.name.text.toString()) }
+        btnCreate.setOnClickListener {
+            uri?.let { viewModel.saveImage(it.toString(), binding.name.text.toString()) }
             viewModel.createPlaylist(
                 Playlist(
                     binding.name.text.toString(),
                     binding.description.text.toString(),
-                    "playlist/${binding.name.text.toString()}.jpg"
+                    "${binding.name.text.toString()}.jpg"
                 )
             )
 
@@ -106,20 +109,6 @@ class NewPlaylistFragment : Fragment() {
             makeSnackbar(view, binding.name.text.toString()).show()
 
         }
-    }
-
-    private fun saveImageToPrivateStorage(uri: Uri, fileName: String) {
-        val filePath =
-            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlist")
-        if (!filePath.exists()) {
-            filePath.mkdirs()
-        }
-        val file = File(filePath, "$fileName.jpg")
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
     private fun showDialogOrNavigateBack() {
@@ -134,26 +123,26 @@ class NewPlaylistFragment : Fragment() {
     private fun makeSnackbar(view: View, trackName: String): Snackbar {
         val customSnackbar = Snackbar.make(
             view,
-            "",//"Плейлист ${binding.name.text.toString()} создан.",
+            "",
             Snackbar.LENGTH_LONG
         )
         val layout = customSnackbar.view as Snackbar.SnackbarLayout
         val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
 
         layout.addView(bind.root, 0)
-        bind.sbText.text = "Плейлист $trackName создан."
-
+        bind.sbText.text =
+            getString(R.string.playlist) + " $trackName " + getString(R.string.created_)
         return customSnackbar
     }
 
     private fun makeDialog(): MaterialAlertDialogBuilder {
         return MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { dialog, _ ->
+            .setTitle(getString(R.string.end_playlist_creation_))
+            .setMessage(getString(R.string.all_unsaved_picks_lost))
+            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton("Завершить") { _, _ ->
+            .setPositiveButton(getString(R.string.finish)) { _, _ ->
                 findNavController().navigateUp()
             }
     }
