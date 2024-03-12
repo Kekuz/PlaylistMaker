@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistCoverRepository
+import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
 
 class PlaylistAdapter(
-    private val playlistCoverRepository: PlaylistCoverRepository
+    private val playlistRepository: PlaylistRepository
     /*private val onClick: (Playlist) -> Unit,*/
 ) :
     RecyclerView.Adapter<PlaylistViewHolder>() {
@@ -19,7 +19,7 @@ class PlaylistAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = PlaylistViewBinding.inflate(inflater, parent, false)
-        return PlaylistViewHolder(binding , playlistCoverRepository)
+        return PlaylistViewHolder(binding, playlistRepository)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
