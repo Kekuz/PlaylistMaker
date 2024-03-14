@@ -47,5 +47,6 @@
     <string name="finish">Завершить</string>
     <string name="playlist">Плейлист</string>
     <string name="created_">создан.</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
 
 </resources>

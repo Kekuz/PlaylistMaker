@@ -2,6 +2,7 @@ package com.example.playlistmaker.ui.audioplayer.view_model
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,20 +11,26 @@ import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesIntera
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
+import com.example.playlistmaker.ui.model.PlaylistState
 import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     private val track: Track,
     private val mediaPlayerInteractor: MediaPlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistRepository: PlaylistRepository,
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<AudioPlayerViewState>()
     fun observeState(): LiveData<AudioPlayerViewState> = stateLiveData
+
+    private val stateBottomSheetLiveData = MutableLiveData<PlaylistState>()
+    fun observeBottomSheetState(): LiveData<PlaylistState> = stateBottomSheetLiveData
 
     private val playerView = PlayerView(CURRENT_TIME_ZERO, false)
 
@@ -34,6 +41,21 @@ class AudioPlayerViewModel(
     override fun onCleared() {
         releasePlayer()
         super.onCleared()
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            val playlists = playlistRepository.getPlaylists()
+            if (playlists.isEmpty()) {
+                stateBottomSheetLiveData.postValue(PlaylistState.Empty)
+            } else {
+                stateBottomSheetLiveData.postValue(PlaylistState.Content(playlists))
+            }
+        }
+    }
+
+    fun getCoverRepository(): PlaylistRepository {
+        return playlistRepository
     }
 
     fun onFavoriteClick() {

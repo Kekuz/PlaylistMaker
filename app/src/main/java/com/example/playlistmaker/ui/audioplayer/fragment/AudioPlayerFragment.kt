@@ -3,10 +3,12 @@ package com.example.playlistmaker.ui.audioplayer.fragment
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,11 +17,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
+import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.ui.audioplayer.bottom_sheet_recycler.BottomSheetAdapter
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
+import com.example.playlistmaker.ui.model.PlaylistState
 import com.example.playlistmaker.ui.util.Convert
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -36,6 +42,9 @@ class AudioPlayerFragment : Fragment() {
             }
         )
     }
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private lateinit var playlistAdapter: BottomSheetAdapter
 
     private var _activityOrientation: Int? = null
     private val activityOrientation get() = _activityOrientation!!
@@ -54,16 +63,29 @@ class AudioPlayerFragment : Fragment() {
     ): View? {
         _binding = FragmentAudioPlayerBinding.inflate(layoutInflater)
 
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        playlistAdapter = BottomSheetAdapter(viewModel.getCoverRepository())
+        binding.rvPlaylists.adapter = playlistAdapter
+
         viewModel.loadView()
         bindClickListeners()
+        bindBottomSheet()
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
+        }
+
+        viewModel.observeBottomSheetState().observe(viewLifecycleOwner) {
+            renderBottomSheet(it)
         }
     }
 
@@ -102,6 +124,40 @@ class AudioPlayerFragment : Fragment() {
         audioPlayerToolBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+
+        playlistButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        btnNewPlaylist.setOnClickListener {
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+        }
+    }
+
+    private fun bindBottomSheet() = with(binding) {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // newState — новое состояние BottomSheet
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        viewModel.getPlaylists()
+                    }
+
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        overlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                overlay.alpha = slideOffset + 1f
+            }
+        })
     }
 
     private fun render(state: AudioPlayerViewState) {
@@ -109,8 +165,29 @@ class AudioPlayerFragment : Fragment() {
             is AudioPlayerViewState.Content -> bindViews(state.track, state.player)
             is AudioPlayerViewState.Player -> bindCurrentPlayer(state.player)
         }
-
     }
+
+    private fun renderBottomSheet(state: PlaylistState) {
+        when (state) {
+            is PlaylistState.Content -> showContent(state.playlists)
+            is PlaylistState.Empty -> showEmptyContent()
+        }
+    }
+
+    private fun showEmptyContent() = with(binding) {
+        //emptyGroup.isVisible = true
+        rvPlaylists.isVisible = false
+        playlistAdapter.clearPlaylists()
+    }
+
+    private fun showContent(playlists: List<Playlist>) = with(binding) {
+        rvPlaylists.isVisible = true
+        //emptyGroup.isVisible = false
+        playlistAdapter.clearPlaylists()
+        playlistAdapter.addPlaylists(playlists)
+        playlistAdapter.notifyDataSetChanged()
+    }
+
 
     private fun bindViews(track: Track, playerView: PlayerView) = with(binding) {
         nameTv.text = track.trackName
@@ -142,7 +219,14 @@ class AudioPlayerFragment : Fragment() {
             .load(artworkUrl512)
             .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
-            .transform(RoundedCorners(Convert.dpToPx(TRACK_ICON_CORNER_RADIUS, requireContext())))
+            .transform(
+                RoundedCorners(
+                    Convert.dpToPx(
+                        TRACK_ICON_CORNER_RADIUS,
+                        requireContext()
+                    )
+                )
+            )
             .into(binding.artworkUrl100)
     }
 

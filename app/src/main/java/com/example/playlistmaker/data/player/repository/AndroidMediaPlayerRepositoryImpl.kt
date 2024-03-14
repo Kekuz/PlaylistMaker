@@ -43,9 +43,11 @@ class AndroidMediaPlayerRepositoryImpl(
     }
 
     override fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = PlayerStates.STATE_PAUSED
-        Log.d("State", "pause")
+        if (playerState != PlayerStates.STATE_PREPARED) {
+            mediaPlayer.pause()
+            playerState = PlayerStates.STATE_PAUSED
+            Log.d("State", "pause")
+        }
     }
 
     //А все потому, что у медиа плеера возникает баг, при котором
