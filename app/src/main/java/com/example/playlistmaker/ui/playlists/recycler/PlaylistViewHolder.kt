@@ -7,6 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.ui.util.Declension
 import java.io.File
 
 class PlaylistViewHolder(
@@ -17,8 +18,14 @@ class PlaylistViewHolder(
 
     fun bind(model: Playlist /*onClick: (Track) -> Unit*/) = with(binding) {
         tvPlaylistName.text = model.name
-        //TODO сделать правильные склонения имен
-        tvTracksCount.text = "${model.tracksCount} треков"
+        tvTracksCount.text = "${model.tracksCount} ${
+            Declension.incline(
+                model.tracksCount,
+                "трек",
+                "трека",
+                "треков"
+            )
+        }"
         Glide.with(itemView)
             .load(File(playlistRepository.getImageFromPrivateStorage(model.name).toUri().path))
             .placeholder(R.drawable.track_placeholder)
