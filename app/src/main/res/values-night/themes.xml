@@ -8,4 +8,12 @@
         <item name="colorPrimary">@color/yp_blue</item>
         <item name="colorSecondary">@color/yp_blue</item>
     </style>
+
+    <style name="CustomSnackbarTheme">
+        <item name="snackbarStyle">@style/MySnackBarStyle</item>
+    </style>
+
+    <style name="MySnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:background">@color/yp_white</item>
+    </style>
 </resources>

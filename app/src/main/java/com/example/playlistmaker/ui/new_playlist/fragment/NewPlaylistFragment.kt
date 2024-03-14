@@ -9,6 +9,7 @@ import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -122,6 +123,7 @@ class NewPlaylistFragment : Fragment() {
     @SuppressLint("RestrictedApi")
     private fun makeSnackbar(view: View, trackName: String): Snackbar {
         val customSnackbar = Snackbar.make(
+            ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
             "",
             Snackbar.LENGTH_LONG

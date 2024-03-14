@@ -1,14 +1,15 @@
 package com.example.playlistmaker.ui.audioplayer.fragment
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
+import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.bottom_sheet_recycler.BottomSheetAdapter
@@ -26,6 +28,7 @@ import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.util.Convert
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -182,12 +185,12 @@ class AudioPlayerFragment : Fragment() {
 
     private fun trackAdded(track: Track) {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        Toast.makeText(requireContext(), "Трек ${track.trackName} добавлен в плейлист!", Toast.LENGTH_SHORT).show()
+        makeSnackbar(requireView(), track.trackName, false).show()
     }
 
     private fun trackAlreadyExist(track: Track) {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        Toast.makeText(requireContext(), "Трек ${track.trackName} уже присутствует в плейлисте!", Toast.LENGTH_SHORT).show()
+        makeSnackbar(requireView(), track.trackName, true).show()
     }
 
     private fun showEmptyContent() = with(binding) {
@@ -233,7 +236,7 @@ class AudioPlayerFragment : Fragment() {
     private fun ImageView.setImage(artworkUrl512: String?) {
         Glide.with(this)
             .load(artworkUrl512)
-            .placeholder(R.drawable.big_trackplaceholder)
+            .placeholder(com.example.playlistmaker.R.drawable.big_trackplaceholder)
             .centerCrop()
             .transform(
                 RoundedCorners(
@@ -253,6 +256,29 @@ class AudioPlayerFragment : Fragment() {
             playButton.setImageResource(R.drawable.audio_player_pause_button)
         else
             playButton.setImageResource(R.drawable.audio_player_play_button)
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun makeSnackbar(view: View, trackName: String, isExist: Boolean): Snackbar {
+        val customSnackbar = Snackbar.make(
+            ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
+            view,
+            "",
+            Snackbar.LENGTH_LONG
+        )
+        val layout = customSnackbar.view as Snackbar.SnackbarLayout
+        val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
+
+        layout.addView(bind.root, 0)
+        if (isExist) {
+            bind.sbText.text =
+                getString(R.string.track) + " $trackName " + getString(R.string.already_exists)
+        } else {
+            bind.sbText.text =
+                getString(R.string.track) + " $trackName " + getString(R.string.added_to_playlist)
+        }
+
+        return customSnackbar
     }
 
     companion object {

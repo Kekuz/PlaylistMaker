@@ -90,8 +90,8 @@
         <item name="android:insetBottom">2dp</item>
     </style>
 
-    <style name="snackbar" parent="Widget.Material3.Snackbar">
-        <item name="android:backgroundTint">@color/yp_black</item>
+    <style name="snackbar" >
+        <item name="android:background">@color/yp_black</item>
     </style>
 
     <style name="snackbar_text_style">

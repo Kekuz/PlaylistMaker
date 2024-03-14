@@ -51,8 +51,8 @@
         <item name="itemIconTint">@color/bottom_navigation_items_color</item>
     </style>
 
-    <style name="snackbar" parent="Widget.Material3.Snackbar">
-        <item name="android:backgroundTint">@color/yp_white</item>
+    <style name="snackbar">
+        <item name="android:background">@color/yp_white</item>
     </style>
 
     <style name="snackbar_text_style">
