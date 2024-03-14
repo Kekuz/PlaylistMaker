@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.model
+package com.example.playlistmaker.ui.playlists.model
 
 import com.example.playlistmaker.domain.model.Playlist
 

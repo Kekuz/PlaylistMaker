@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
-import com.example.playlistmaker.ui.model.PlaylistState
+import com.example.playlistmaker.ui.playlists.model.PlaylistState
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(

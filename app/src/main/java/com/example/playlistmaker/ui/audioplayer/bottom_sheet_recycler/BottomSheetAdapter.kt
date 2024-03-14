@@ -9,8 +9,8 @@ import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
 
 class BottomSheetAdapter(
-    private val playlistRepository: PlaylistRepository
-    /*private val onClick: (Playlist) -> Unit,*/
+    private val playlistRepository: PlaylistRepository,
+    private val onClick: (Playlist) -> Unit,
 ) : RecyclerView.Adapter<BottomSheetViewHolder>() {
 
     private val playlists = mutableListOf<Playlist>()
@@ -23,7 +23,7 @@ class BottomSheetAdapter(
     }
 
     override fun onBindViewHolder(holder: BottomSheetViewHolder, position: Int) {
-        holder.bind(playlists[position] /*onClick*/)
+        holder.bind(playlists[position], onClick)
     }
 
     override fun getItemCount(): Int {

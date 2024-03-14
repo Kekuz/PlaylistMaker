@@ -1,12 +1,12 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.data.favorites.DatabaseClient
 import com.example.playlistmaker.data.favorites.database.RoomDatabaseClient
 import com.example.playlistmaker.data.favorites.database.TrackDatabase
 import com.example.playlistmaker.data.playlist.database.PlaylistDatabase
+import com.example.playlistmaker.data.playlist.database.TrackInPlaylistDatabase
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.SearchHistoryStorage
 import com.example.playlistmaker.data.search.network.ITunesAPI
@@ -40,6 +40,12 @@ val dataModule = module {
     single<PlaylistDatabase> {
         Room.databaseBuilder(
             androidContext(), PlaylistDatabase::class.java, "playlist-database"
+        ).build()
+    }
+
+    single<TrackInPlaylistDatabase> {
+        Room.databaseBuilder(
+            androidContext(), TrackInPlaylistDatabase::class.java, "track-in-playlist-database"
         ).build()
     }
 

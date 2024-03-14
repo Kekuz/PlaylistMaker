@@ -15,7 +15,7 @@ class BottomSheetViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(model: Playlist /*onClick: (Track) -> Unit*/) = with(binding) {
+    fun bind(model: Playlist, onClick: (Playlist) -> Unit) = with(binding) {
         tvPlaylistName.text = model.name
         //TODO сделать правильные склонения имен
         tvTracksCount.text = "${model.tracksCount} треков"
@@ -26,9 +26,9 @@ class BottomSheetViewHolder(
             .centerCrop()
             .into(ivPlaylist)
 
-        /*itemView.setOnClickListener {
+        itemView.setOnClickListener {
             onClick.invoke(model)
-        }*/
+        }
     }
 
 }

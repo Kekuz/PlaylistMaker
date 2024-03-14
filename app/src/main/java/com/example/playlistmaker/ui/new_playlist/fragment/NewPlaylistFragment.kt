@@ -99,9 +99,9 @@ class NewPlaylistFragment : Fragment() {
             uri?.let { viewModel.saveImage(it.toString(), binding.name.text.toString()) }
             viewModel.createPlaylist(
                 Playlist(
-                    binding.name.text.toString(),
-                    binding.description.text.toString(),
-                    "${binding.name.text.toString()}.jpg"
+                    name = binding.name.text.toString(),
+                    description = binding.description.text.toString(),
+                    pathToCover = "${binding.name.text.toString()}.jpg"
                 )
             )
 

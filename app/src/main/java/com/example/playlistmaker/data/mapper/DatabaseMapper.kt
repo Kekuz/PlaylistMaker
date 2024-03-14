@@ -1,7 +1,9 @@
 package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.data.favorites.database.model.TrackDatabaseEntity
+import com.example.playlistmaker.data.playlist.database.TrackInPlaylistDatabase
 import com.example.playlistmaker.data.playlist.database.model.PlaylistDatabaseEntity
+import com.example.playlistmaker.data.playlist.database.model.TrackInPlaylistDatabaseEntity
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 
@@ -51,13 +53,48 @@ object DatabaseMapper {
         )
     }
 
-    fun map(playlistDatabaseEntity: PlaylistDatabaseEntity): Playlist = with(playlistDatabaseEntity) {
-        return Playlist(
-            name = name,
-            description = description,
-            pathToCover = pathToCover,
-            trackIdsList = trackIdsList,
-            tracksCount = tracksCount,
+    fun mapAndAddTrackToPlaylist(playlist: Playlist, track: Track): PlaylistDatabaseEntity =
+        with(playlist) {
+            val newTrackIdsList = mutableListOf<String>()
+            newTrackIdsList.addAll(playlist.trackIdsList)
+            newTrackIdsList.add(track.trackId.toString())
+
+            return PlaylistDatabaseEntity(
+                id = id,
+                name = name,
+                description = description,
+                pathToCover = pathToCover,
+                trackIdsList = newTrackIdsList,
+                tracksCount = tracksCount + 1,
+            )
+        }
+
+    fun map(playlistDatabaseEntity: PlaylistDatabaseEntity): Playlist =
+        with(playlistDatabaseEntity) {
+            return Playlist(
+                id = id,
+                name = name,
+                description = description,
+                pathToCover = pathToCover,
+                trackIdsList = trackIdsList,
+                tracksCount = tracksCount,
+            )
+        }
+
+    fun mapToPlaylist(track: Track): TrackInPlaylistDatabaseEntity = with(track) {
+        return TrackInPlaylistDatabaseEntity(
+            id = trackId,
+            timeCreated = System.currentTimeMillis(),
+            trackName = trackName,
+            artistName = artistName,
+            trackTime = trackTime,
+            artworkUrl100 = artworkUrl100,
+            artworkUrl512 = artworkUrl512,
+            collectionName = collectionName,
+            releaseYear = releaseYear,
+            primaryGenreName = primaryGenreName,
+            country = country,
+            previewUrl = previewUrl
         )
     }
 }

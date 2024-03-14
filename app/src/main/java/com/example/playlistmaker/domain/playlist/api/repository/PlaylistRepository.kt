@@ -1,6 +1,7 @@
 package com.example.playlistmaker.domain.playlist.api.repository
 
 import com.example.playlistmaker.domain.model.Playlist
+import com.example.playlistmaker.domain.model.Track
 
 interface PlaylistRepository {
     suspend fun savePlaylist(playlist: Playlist)
@@ -10,4 +11,6 @@ interface PlaylistRepository {
     fun getImageFromPrivateStorage(fileName: String): String
 
     fun saveImageToPrivateStorage(uri: String, fileName: String)
+
+    suspend fun addTrackToPlaylist(track: Track, playlist: Playlist)
 }

@@ -3,12 +3,12 @@ package com.example.playlistmaker.ui.audioplayer.fragment
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,10 +20,10 @@ import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.bottom_sheet_recycler.BottomSheetAdapter
+import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerBottomSheetState
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.example.playlistmaker.ui.model.PlaylistState
 import com.example.playlistmaker.ui.util.Convert
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,6 +45,10 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private lateinit var playlistAdapter: BottomSheetAdapter
+
+    private val onClick: (Playlist) -> Unit = {
+        viewModel.addTrackToPlaylist(playlist = it)
+    }
 
     private var _activityOrientation: Int? = null
     private val activityOrientation get() = _activityOrientation!!
@@ -73,7 +77,7 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playlistAdapter = BottomSheetAdapter(viewModel.getCoverRepository())
+        playlistAdapter = BottomSheetAdapter(viewModel.getCoverRepository(), onClick)
         binding.rvPlaylists.adapter = playlistAdapter
 
         viewModel.loadView()
@@ -167,11 +171,23 @@ class AudioPlayerFragment : Fragment() {
         }
     }
 
-    private fun renderBottomSheet(state: PlaylistState) {
+    private fun renderBottomSheet(state: AudioPlayerBottomSheetState) {
         when (state) {
-            is PlaylistState.Content -> showContent(state.playlists)
-            is PlaylistState.Empty -> showEmptyContent()
+            is AudioPlayerBottomSheetState.ContentPlaylists -> showContent(state.playlists)
+            is AudioPlayerBottomSheetState.EmptyPlaylists -> showEmptyContent()
+            is AudioPlayerBottomSheetState.TrackAdded -> trackAdded(state.track)
+            is AudioPlayerBottomSheetState.TrackAlreadyExist -> trackAlreadyExist(state.track)
         }
+    }
+
+    private fun trackAdded(track: Track) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        Toast.makeText(requireContext(), "Трек ${track.trackName} добавлен в плейлист!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun trackAlreadyExist(track: Track) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        Toast.makeText(requireContext(), "Трек ${track.trackName} уже присутствует в плейлисте!", Toast.LENGTH_SHORT).show()
     }
 
     private fun showEmptyContent() = with(binding) {
