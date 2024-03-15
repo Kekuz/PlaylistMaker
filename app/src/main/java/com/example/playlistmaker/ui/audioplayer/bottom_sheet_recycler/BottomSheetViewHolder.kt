@@ -7,7 +7,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.BottomSheetPlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
-import com.example.playlistmaker.ui.util.Declension
 import java.io.File
 
 class BottomSheetViewHolder(
@@ -17,15 +16,12 @@ class BottomSheetViewHolder(
 
     fun bind(model: Playlist, onClick: (Playlist) -> Unit) = with(binding) {
         tvPlaylistName.text = model.name
-        tvTracksCount.text =
-            "${model.tracksCount} ${
-                Declension.incline(
-                    model.tracksCount,
-                    "трек",
-                    "трека",
-                    "треков"
-                )
-            }"
+        tvTracksCount.text = itemView.context.resources.getQuantityString(
+            R.plurals.plurals_track,
+            model.tracksCount,
+            model.tracksCount
+        )
+
         Glide.with(itemView)
             .load(File(playlistRepository.getImageFromPrivateStorage(model.name).toUri().path))
             .placeholder(R.drawable.track_placeholder).error(R.drawable.track_placeholder)

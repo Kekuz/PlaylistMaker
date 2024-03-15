@@ -1,11 +1,9 @@
 package com.example.playlistmaker.ui.new_playlist.fragment
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,24 +12,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
-import com.example.playlistmaker.ui.util.Convert
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
 
 
 class NewPlaylistFragment : Fragment() {
@@ -45,14 +42,6 @@ class NewPlaylistFragment : Fragment() {
                 view?.let {
                     Glide.with(it).load(uri)
                         .centerCrop()
-                        .transform(
-                            RoundedCorners(
-                                Convert.dpToPx(
-                                    ROUNDED_CORNERS,
-                                    requireContext()
-                                )
-                            )
-                        )
                         .into(binding.picture)
                 }
                 this.uri = uri
@@ -67,9 +56,19 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
+    private val inputMethodManager by lazy {
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    }
+
     private var uri: Uri? = null
 
     private val viewModel by viewModel<NewPlaylistViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,9 +81,18 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.name.addTextChangedListener(getTextWatcher())
+        bindTextWatcher()
         bindOnClick(view)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        inputMethodManager?.hideSoftInputFromWindow(
+            view?.windowToken,
+            0
+        )
+
     }
 
     private fun bindOnClick(view: View) = with(binding) {
@@ -149,12 +157,9 @@ class NewPlaylistFragment : Fragment() {
             }
     }
 
-    private fun getTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    private fun bindTextWatcher() = with(binding) {
+        name.addTextChangedListener(
+            onTextChanged = { s, _, _, _ ->
                 if (s.isNullOrEmpty()) {
                     binding.btnCreate.backgroundTintList =
                         ContextCompat.getColorStateList(requireContext(), R.color.yp_text_gray)
@@ -165,10 +170,6 @@ class NewPlaylistFragment : Fragment() {
                     binding.btnCreate.isEnabled = true
                 }
             }
-        }
-    }
-
-    companion object {
-        const val ROUNDED_CORNERS = 8f
+        )
     }
 }
