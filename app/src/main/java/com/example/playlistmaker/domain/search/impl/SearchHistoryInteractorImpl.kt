@@ -9,8 +9,6 @@ import kotlinx.coroutines.async
 
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     SearchHistoryInteractor {
-
-    //TODO если в поиске полайкать записи, то они несколько раз добавятся в историю
     override suspend fun getTrackHistory(): List<Track> {
         return CoroutineScope(Dispatchers.IO).async {
             repository.getTracksFromStorage().toMutableList()
