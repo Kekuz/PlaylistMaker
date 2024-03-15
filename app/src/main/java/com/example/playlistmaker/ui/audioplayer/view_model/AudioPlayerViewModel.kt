@@ -45,12 +45,20 @@ class AudioPlayerViewModel(
 
     fun addTrackToPlaylist(playlist: Playlist) {
         if (playlist.trackIdsList.contains(track.trackId.toString())) {
-            stateBottomSheetLiveData.postValue(AudioPlayerBottomSheetState.TrackAlreadyExist(track))
+            stateBottomSheetLiveData.postValue(
+                AudioPlayerBottomSheetState.TrackAlreadyExist(
+                    playlist
+                )
+            )
         } else {
             viewModelScope.launch {
                 playlistRepository.addTrackToPlaylist(track, playlist)
             }
-            stateBottomSheetLiveData.postValue(AudioPlayerBottomSheetState.TrackAdded(track))
+            stateBottomSheetLiveData.postValue(
+                AudioPlayerBottomSheetState.TrackAdded(
+                    playlist
+                )
+            )
         }
     }
 

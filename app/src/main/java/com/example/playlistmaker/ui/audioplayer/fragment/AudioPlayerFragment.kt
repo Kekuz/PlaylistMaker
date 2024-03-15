@@ -178,19 +178,19 @@ class AudioPlayerFragment : Fragment() {
         when (state) {
             is AudioPlayerBottomSheetState.ContentPlaylists -> showContent(state.playlists)
             is AudioPlayerBottomSheetState.EmptyPlaylists -> showEmptyContent()
-            is AudioPlayerBottomSheetState.TrackAdded -> trackAdded(state.track)
-            is AudioPlayerBottomSheetState.TrackAlreadyExist -> trackAlreadyExist(state.track)
+            is AudioPlayerBottomSheetState.TrackAdded -> trackAdded(state.playlist)
+            is AudioPlayerBottomSheetState.TrackAlreadyExist -> trackAlreadyExist(state.playlist)
         }
     }
 
-    private fun trackAdded(track: Track) {
+    private fun trackAdded(playlist: Playlist) {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        makeSnackbar(requireView(), track.trackName, false).show()
+        makeSnackbar(requireView(), playlist.name, false).show()
     }
 
-    private fun trackAlreadyExist(track: Track) {
+    private fun trackAlreadyExist(playlist: Playlist) {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        makeSnackbar(requireView(), track.trackName, true).show()
+        makeSnackbar(requireView(), playlist.name, true).show()
     }
 
     private fun showEmptyContent() = with(binding) {
@@ -259,7 +259,7 @@ class AudioPlayerFragment : Fragment() {
     }
 
     @SuppressLint("RestrictedApi")
-    private fun makeSnackbar(view: View, trackName: String, isExist: Boolean): Snackbar {
+    private fun makeSnackbar(view: View, playlistName: String, isExist: Boolean): Snackbar {
         val customSnackbar = Snackbar.make(
             ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
@@ -271,11 +271,9 @@ class AudioPlayerFragment : Fragment() {
 
         layout.addView(bind.root, 0)
         if (isExist) {
-            bind.sbText.text =
-                getString(R.string.track) + " $trackName " + getString(R.string.already_exists)
+            bind.sbText.text = "${getString(R.string.already_added_to_playlist)} $playlistName"
         } else {
-            bind.sbText.text =
-                getString(R.string.track) + " $trackName " + getString(R.string.added_to_playlist)
+            bind.sbText.text = "${getString(R.string.added_to_playlist)} $playlistName"
         }
 
         return customSnackbar

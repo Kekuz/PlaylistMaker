@@ -10,10 +10,10 @@ sealed interface AudioPlayerBottomSheetState {
     ) : AudioPlayerBottomSheetState
 
     data class TrackAdded(
-        val track: Track
+        val playlist: Playlist
     ) : AudioPlayerBottomSheetState
 
     data class TrackAlreadyExist(
-        val track: Track
+        val playlist: Playlist
     ) : AudioPlayerBottomSheetState
 }
