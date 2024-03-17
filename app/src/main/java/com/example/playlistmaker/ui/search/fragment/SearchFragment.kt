@@ -17,9 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.fragment.AudioPlayerFragment
 import com.example.playlistmaker.ui.search.models.SearchState
+import com.example.playlistmaker.ui.search.recycler.TrackAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

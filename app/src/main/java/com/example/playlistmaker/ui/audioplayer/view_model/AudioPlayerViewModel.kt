@@ -7,9 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
+import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerBottomSheetState
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
 import kotlinx.coroutines.launch
@@ -17,13 +20,17 @@ import kotlinx.coroutines.launch
 class AudioPlayerViewModel(
     private val track: Track,
     private val mediaPlayerInteractor: MediaPlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistRepository: PlaylistRepository,
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<AudioPlayerViewState>()
     fun observeState(): LiveData<AudioPlayerViewState> = stateLiveData
+
+    private val stateBottomSheetLiveData = MutableLiveData<AudioPlayerBottomSheetState>()
+    fun observeBottomSheetState(): LiveData<AudioPlayerBottomSheetState> = stateBottomSheetLiveData
 
     private val playerView = PlayerView(CURRENT_TIME_ZERO, false)
 
@@ -34,6 +41,44 @@ class AudioPlayerViewModel(
     override fun onCleared() {
         releasePlayer()
         super.onCleared()
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        if (playlist.trackIdsList.contains(track.trackId.toString())) {
+            stateBottomSheetLiveData.postValue(
+                AudioPlayerBottomSheetState.TrackAlreadyExist(
+                    playlist
+                )
+            )
+        } else {
+            viewModelScope.launch {
+                playlistRepository.addTrackToPlaylist(track, playlist)
+            }
+            stateBottomSheetLiveData.postValue(
+                AudioPlayerBottomSheetState.TrackAdded(
+                    playlist
+                )
+            )
+        }
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            val playlists = playlistRepository.getPlaylists()
+            if (playlists.isEmpty()) {
+                stateBottomSheetLiveData.postValue(AudioPlayerBottomSheetState.EmptyPlaylists)
+            } else {
+                stateBottomSheetLiveData.postValue(
+                    AudioPlayerBottomSheetState.ContentPlaylists(
+                        playlists
+                    )
+                )
+            }
+        }
+    }
+
+    fun getCoverRepository(): PlaylistRepository {
+        return playlistRepository
     }
 
     fun onFavoriteClick() {

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.media.view_model
+package com.example.playlistmaker.ui.favorite.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.ui.media.models.FavoritesState
-import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.util.Debounce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn

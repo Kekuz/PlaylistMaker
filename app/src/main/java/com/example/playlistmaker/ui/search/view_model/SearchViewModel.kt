@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.api.interactor.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.api.interactor.TrackInteractor
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.search.models.SearchState
 import com.example.playlistmaker.ui.util.Debounce
 import kotlinx.coroutines.CoroutineScope

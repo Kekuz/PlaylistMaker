@@ -2,7 +2,7 @@ package com.example.playlistmaker.domain.favorites.impl
 
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

@@ -4,13 +4,13 @@ import android.content.Context
 import android.util.Log
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.favorites.DatabaseClient
-import com.example.playlistmaker.data.favorites.mapper.DatabaseMapper
+import com.example.playlistmaker.data.mapper.DatabaseMapper
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.network.dto.TrackSearchRequest
 import com.example.playlistmaker.data.search.network.dto.TrackSearchResponse
 import com.example.playlistmaker.domain.search.api.repository.TrackRepository
-import com.example.playlistmaker.domain.search.models.Resource
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Resource
+import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

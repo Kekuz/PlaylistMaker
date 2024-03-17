@@ -1,6 +1,6 @@
 package com.example.playlistmaker.ui.audioplayer.models
 
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 
 
 sealed interface AudioPlayerViewState {

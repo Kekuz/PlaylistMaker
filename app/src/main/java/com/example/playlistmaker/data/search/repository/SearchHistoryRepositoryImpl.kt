@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.search.repository
 
 import com.example.playlistmaker.data.search.SearchHistoryStorage
 import com.example.playlistmaker.domain.search.api.repository.SearchHistoryRepository
-import com.example.playlistmaker.domain.search.models.Track
+import com.example.playlistmaker.domain.model.Track
 
 class SearchHistoryRepositoryImpl(private val searchHistoryStorage: SearchHistoryStorage) :
     SearchHistoryRepository {
