@@ -55,6 +55,17 @@ class PlaylistViewModel(
         }
     }
 
+    fun deleteTrack(track: Track) {
+        viewModelScope.launch {
+
+            playlist?.let {
+                playlistRepository.deleteTrackFromPlaylist(track.trackId.toString(), it)
+                tracks.remove(track)
+                stateLiveData.postValue(PlaylistViewState.PlaylistContentDeleteTrack(track))
+            }
+        }
+    }
+
     fun countPlaylistMinutes(): Int {
         val secondsSum =
             tracks.sumOf {
@@ -83,10 +94,6 @@ class PlaylistViewModel(
         return File(
             playlistRepository.getImageFromPrivateStorage(playlist?.name ?: "").toUri().path
         )
-    }
-
-    fun getCoverRepository(): PlaylistRepository {
-        return playlistRepository
     }
 
     fun calculateBottomSheetHeight(binding: FragmentPlaylistBinding) {

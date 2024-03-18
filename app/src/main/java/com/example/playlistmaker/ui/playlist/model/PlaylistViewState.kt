@@ -9,4 +9,7 @@ sealed interface PlaylistViewState {
         val tracks: List<Track>,
     ) : PlaylistViewState
 
+    data class PlaylistContentDeleteTrack(
+        val track: Track,
+    ) : PlaylistViewState
 }

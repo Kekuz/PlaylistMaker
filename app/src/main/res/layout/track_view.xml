@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/view_element_layout_height"
     android:gravity="center"
+    android:longClickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true">
 

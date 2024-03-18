@@ -13,10 +13,9 @@ import java.io.File
 
 class BottomSheetPlaylistViewHolder(
     private val binding: TrackViewBinding,
-    private val playlistRepository: PlaylistRepository,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(model: Track, onClick: (Track) -> Unit) = with(binding) {
+    fun bind(model: Track, onClick: (Track) -> Unit, onLongClick: (Track) -> Unit) = with(binding) {
         trackName.text = model.trackName
         trackAuthor.text = model.artistName
         trackTime.text = model.trackTime
@@ -28,6 +27,11 @@ class BottomSheetPlaylistViewHolder(
 
         itemView.setOnClickListener {
             onClick.invoke(model)
+        }
+
+        itemView.setOnLongClickListener {
+            onLongClick.invoke(model)
+            true
         }
     }
 

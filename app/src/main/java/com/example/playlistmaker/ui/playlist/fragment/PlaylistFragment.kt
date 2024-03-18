@@ -19,6 +19,7 @@ import com.example.playlistmaker.ui.playlist.model.PlaylistViewState
 import com.example.playlistmaker.ui.playlist.recycler.BottomSheetPlaylistAdapter
 import com.example.playlistmaker.ui.playlist.view_model.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -55,6 +56,10 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    private val onLongClick: (Track) -> Unit = {
+        makeDialog(it).show()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -66,7 +71,8 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tracksAdapter = BottomSheetPlaylistAdapter(viewModel.getCoverRepository(), onClick)
+        tracksAdapter =
+            BottomSheetPlaylistAdapter(onClick, onLongClick)
 
         binding.rvTracks.adapter = tracksAdapter
 
@@ -83,6 +89,8 @@ class PlaylistFragment : Fragment() {
                 state.playlists,
                 state.tracks
             )
+
+            is PlaylistViewState.PlaylistContentDeleteTrack -> showBottomViewContentAfterDeleting(state.track)
         }
     }
 
@@ -91,6 +99,13 @@ class PlaylistFragment : Fragment() {
         Log.e("Tracks", tracks.toString())
         tracksAdapter.addTracks(tracks)
         tracksAdapter.notifyDataSetChanged()
+    }
+
+    private fun showBottomViewContentAfterDeleting(track: Track) {
+        val deletedTrackIndex = tracksAdapter.removeTrack(track)
+        Log.e("Tracks deleted", track.toString())
+        tracksAdapter.notifyItemRemoved(deletedTrackIndex)
+        tracksAdapter.notifyItemRangeChanged(deletedTrackIndex, tracksAdapter.itemCount)
     }
 
     private fun showPlaylistContent(playlist: Playlist, tracks: List<Track>) = with(binding) {
@@ -132,5 +147,16 @@ class PlaylistFragment : Fragment() {
         toolBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    private fun makeDialog(track: Track): MaterialAlertDialogBuilder {
+        return MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.want_to_delete_track_))
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.cancel()
+            }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                viewModel.deleteTrack(track)
+            }
     }
 }

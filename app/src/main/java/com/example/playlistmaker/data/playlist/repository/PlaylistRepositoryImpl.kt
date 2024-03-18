@@ -78,6 +78,34 @@ class PlaylistRepositoryImpl(
         return tracks
     }
 
+    override suspend fun deleteTrackFromPlaylist(id: String, playlist: Playlist): Unit =
+        withContext(Dispatchers.IO) {
+            playlistDatabase.playlistDao?.insert(
+                DatabaseMapper.mapAndDeleteTrackFromPlaylist(
+                    id,
+                    playlist,
+                )
+            )
+
+            deleteFromTotalPlaylist(id)
+        }
+
+    private suspend fun deleteFromTotalPlaylist(id: String) {
+        val totalPlaylists = getPlaylists()
+        var matchesNumber = 0
+        totalPlaylists.forEach {
+            if (it.trackIdsList.contains(id)) matchesNumber++
+        }
+        if (matchesNumber == 0) {
+            val deletedTrack = getTracksFromPlaylistByIds(listOf(id))[0]
+            trackInPlaylistDatabase.trackInPlaylistDao?.delete(
+                DatabaseMapper.mapToPlaylist(
+                    deletedTrack
+                )
+            )
+        }
+    }
+
 
     companion object {
         const val DIRECTORY = "playlist"
