@@ -64,7 +64,7 @@ class PlaylistFragment : Fragment() {
     }
 
     private val onLongClick: (Track) -> Unit = {
-        makeDialog(it).show()
+        makeDeleteTrackDialog(it).show()
     }
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -233,7 +233,7 @@ class PlaylistFragment : Fragment() {
         }
 
         tvDeletePlaylist.setOnClickListener {
-            //TODO Дописать коду
+            makeDeletePlaylistDialog().show()
         }
     }
 
@@ -259,7 +259,7 @@ class PlaylistFragment : Fragment() {
         })
     }
 
-    private fun makeDialog(track: Track): MaterialAlertDialogBuilder {
+    private fun makeDeleteTrackDialog(track: Track): MaterialAlertDialogBuilder {
         return MaterialAlertDialogBuilder(
             ContextThemeWrapper(
                 requireContext(),
@@ -272,6 +272,23 @@ class PlaylistFragment : Fragment() {
             }
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 viewModel.deleteTrack(track)
+            }
+    }
+
+    private fun makeDeletePlaylistDialog(): MaterialAlertDialogBuilder {
+        return MaterialAlertDialogBuilder(
+            ContextThemeWrapper(
+                requireContext(),
+                R.style.DialogTheme
+            )
+        )
+            .setTitle(getString(R.string.want_to_delete_playlist_))
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.cancel()
+            }
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                viewModel.deletePlaylist()
+                findNavController().navigateUp()
             }
     }
 

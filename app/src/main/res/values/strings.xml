@@ -50,6 +50,7 @@
     <string name="added_to_playlist">Добавлено в плейлист</string>
     <string name="already_added_to_playlist">Трек уже добавлен в плейлист</string>
     <string name="want_to_delete_track_">Хотите удалить трек?</string>
+    <string name="want_to_delete_playlist_">Хотите удалить плейлист?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
 

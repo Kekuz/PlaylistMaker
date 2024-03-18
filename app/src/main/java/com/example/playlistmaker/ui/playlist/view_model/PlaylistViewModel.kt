@@ -71,6 +71,12 @@ class PlaylistViewModel(
         }
     }
 
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            playlist?.let { playlistRepository.deletePlaylist(it) }
+        }
+    }
+
     fun getTracksCount(): Int {
         return playlist?.tracksCount ?: 0
     }

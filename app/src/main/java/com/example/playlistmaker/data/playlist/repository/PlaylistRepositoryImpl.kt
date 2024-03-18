@@ -90,6 +90,20 @@ class PlaylistRepositoryImpl(
             deleteFromTotalPlaylist(id)
         }
 
+    override suspend fun deletePlaylist(playlist: Playlist) =
+        withContext(Dispatchers.IO) {
+            playlistDatabase.playlistDao?.delete(
+                DatabaseMapper.mapPlaylistToDelete(
+                    playlist,
+                )
+            )
+
+            playlist.trackIdsList.forEach {
+                deleteFromTotalPlaylist(it)
+            }
+        }
+
+
     private suspend fun deleteFromTotalPlaylist(id: String) {
         val totalPlaylists = getPlaylists()
         var matchesNumber = 0

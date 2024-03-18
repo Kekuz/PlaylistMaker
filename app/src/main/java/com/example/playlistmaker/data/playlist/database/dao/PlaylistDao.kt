@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.playlistmaker.data.playlist.database.model.PlaylistDatabaseEntity
+import com.example.playlistmaker.data.playlist.database.model.TrackInPlaylistDatabaseEntity
 
 @Dao
 interface PlaylistDao {
@@ -18,4 +19,7 @@ interface PlaylistDao {
 
     @Query("SELECT * FROM playlist_database WHERE id LIKE :id")
     fun getById(id: Int): PlaylistDatabaseEntity?
+
+    @Delete
+    fun delete(playlist: PlaylistDatabaseEntity)
 }

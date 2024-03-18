@@ -53,6 +53,17 @@ object DatabaseMapper {
         )
     }
 
+    fun mapPlaylistToDelete(playlist: Playlist): PlaylistDatabaseEntity = with(playlist) {
+        return PlaylistDatabaseEntity(
+            id = id,
+            name = name,
+            description = description,
+            pathToCover = pathToCover,
+            trackIdsList = trackIdsList,
+            tracksCount = tracksCount,
+        )
+    }
+
     fun mapAndAddTrackToPlaylist(playlist: Playlist, track: Track): PlaylistDatabaseEntity =
         with(playlist) {
             val newTrackIdsList = mutableListOf<String>()

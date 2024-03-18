@@ -19,4 +19,6 @@ interface PlaylistRepository {
     suspend fun getTracksFromPlaylistByIds(ids: List<String>): List<Track>
 
     suspend fun deleteTrackFromPlaylist(id: String, playlist: Playlist)
+
+    suspend fun deletePlaylist(playlist: Playlist)
 }
