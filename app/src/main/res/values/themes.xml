@@ -33,4 +33,8 @@
     <style name="MySnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:background">@color/yp_black</item>
     </style>
+
+    <style name="DialogTheme" parent="ThemeOverlay.MaterialComponents.Light">
+
+    </style>
 </resources>

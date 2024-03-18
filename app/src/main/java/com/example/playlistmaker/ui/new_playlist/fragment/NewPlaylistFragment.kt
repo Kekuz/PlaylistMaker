@@ -146,7 +146,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun makeDialog(): MaterialAlertDialogBuilder {
-        return MaterialAlertDialogBuilder(requireContext())
+        return MaterialAlertDialogBuilder(ContextThemeWrapper(requireContext(), R.style.DialogTheme))
             .setTitle(getString(R.string.end_playlist_creation_))
             .setMessage(getString(R.string.all_unsaved_picks_lost))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->

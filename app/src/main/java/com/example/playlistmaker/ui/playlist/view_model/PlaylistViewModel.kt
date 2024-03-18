@@ -1,6 +1,6 @@
 package com.example.playlistmaker.ui.playlist.view_model
 
-import android.util.Log
+
 import androidx.core.net.toUri
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
@@ -69,6 +69,10 @@ class PlaylistViewModel(
             }
             playlist = playlistRepository.getPlaylistById(id)
         }
+    }
+
+    fun getTracksCount(): Int {
+        return playlist?.tracksCount ?: 0
     }
 
     fun countPlaylistMinutes(): Int {

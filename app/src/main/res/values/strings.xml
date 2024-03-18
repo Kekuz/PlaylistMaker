@@ -71,4 +71,9 @@
         <item quantity="other">%1$d минут</item>
     </plurals>
 
+    <string name="no_tracks_for_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+
+    <string name="share">Поделиться</string>
+    <string name="edit_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
 </resources>

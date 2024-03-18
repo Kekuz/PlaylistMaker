@@ -236,7 +236,7 @@ class AudioPlayerFragment : Fragment() {
     private fun ImageView.setImage(artworkUrl512: String?) {
         Glide.with(this)
             .load(artworkUrl512)
-            .placeholder(com.example.playlistmaker.R.drawable.big_trackplaceholder)
+            .placeholder(R.drawable.big_trackplaceholder)
             .centerCrop()
             .transform(
                 RoundedCorners(
