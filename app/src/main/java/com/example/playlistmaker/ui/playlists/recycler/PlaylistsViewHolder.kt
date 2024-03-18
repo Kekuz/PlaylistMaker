@@ -10,13 +10,13 @@ import com.example.playlistmaker.domain.playlist.api.repository.PlaylistReposito
 import java.io.File
 
 
-class PlaylistViewHolder(
+class PlaylistsViewHolder(
     private val binding: PlaylistViewBinding,
     private val playlistRepository: PlaylistRepository,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(model: Playlist/*, onClick: (Track) -> Unit*/) = with(binding) {
+    fun bind(model: Playlist, onClick: (Playlist) -> Unit) = with(binding) {
         tvPlaylistName.text = model.name
         tvTracksCount.text = itemView.context.resources.getQuantityString(
             R.plurals.plurals_track,
@@ -29,9 +29,9 @@ class PlaylistViewHolder(
             .centerCrop()
             .into(picture)
 
-        /*itemView.setOnClickListener {
+        itemView.setOnClickListener {
             onClick.invoke(model)
-        }*/
+        }
     }
 
 }

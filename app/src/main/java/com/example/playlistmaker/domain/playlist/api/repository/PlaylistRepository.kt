@@ -8,9 +8,13 @@ interface PlaylistRepository {
 
     suspend fun getPlaylists(): List<Playlist>
 
+    suspend fun getPlaylistById(id: Int): Playlist?
+
     fun getImageFromPrivateStorage(fileName: String): String
 
     fun saveImageToPrivateStorage(uri: String, fileName: String)
 
     suspend fun addTrackToPlaylist(track: Track, playlist: Playlist)
+
+    suspend fun getTracksFromPlaylistByIds(ids: List<String>): List<Track>
 }

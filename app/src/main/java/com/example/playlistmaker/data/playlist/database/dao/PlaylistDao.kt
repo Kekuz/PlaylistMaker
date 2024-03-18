@@ -15,4 +15,6 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlist_database")
     fun getAll(): List<PlaylistDatabaseEntity>
 
+    @Query("SELECT * FROM playlist_database WHERE id LIKE :id")
+    fun getById(id: Int): PlaylistDatabaseEntity?
 }

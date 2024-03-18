@@ -5,6 +5,7 @@ import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.favorite.view_model.FavoritesViewModel
 import com.example.playlistmaker.ui.media.view_model.MediaViewModel
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
+import com.example.playlistmaker.ui.playlist.view_model.PlaylistViewModel
 import com.example.playlistmaker.ui.playlists.view_model.PlaylistsViewModel
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
@@ -40,6 +41,10 @@ val viewModelModule = module {
 
     viewModel {
         PlaylistsViewModel(get())
+    }
+
+    viewModel { (id: Int) ->
+        PlaylistViewModel(id, get())
     }
 
 }

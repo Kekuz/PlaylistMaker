@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
+import android.provider.ContactsContract.Data
 import androidx.core.net.toUri
 import com.example.playlistmaker.data.mapper.DatabaseMapper
 import com.example.playlistmaker.data.playlist.database.PlaylistDatabase
@@ -20,8 +21,7 @@ class PlaylistRepositoryImpl(
     private val playlistDatabase: PlaylistDatabase,
     private val trackInPlaylistDatabase: TrackInPlaylistDatabase,
     private val context: Context
-) :
-    PlaylistRepository {
+) : PlaylistRepository {
     override suspend fun savePlaylist(playlist: Playlist): Unit = withContext(Dispatchers.IO) {
         playlistDatabase.playlistDao?.insert(DatabaseMapper.map(playlist))
     }
@@ -29,6 +29,10 @@ class PlaylistRepositoryImpl(
     override suspend fun getPlaylists(): List<Playlist> = withContext(Dispatchers.IO) {
         return@withContext playlistDatabase.playlistDao?.getAll()?.map { DatabaseMapper.map(it) }
             ?: emptyList()
+    }
+
+    override suspend fun getPlaylistById(id: Int): Playlist? = withContext(Dispatchers.IO) {
+        return@withContext DatabaseMapper.mapNullable(playlistDatabase.playlistDao?.getById(id))
     }
 
     override fun getImageFromPrivateStorage(fileName: String): String {
@@ -61,6 +65,19 @@ class PlaylistRepositoryImpl(
                 )
             )
         }
+
+    override suspend fun getTracksFromPlaylistByIds(ids: List<String>): List<Track> {
+        val tracks = mutableListOf<Track>()
+        withContext(Dispatchers.IO) {
+            val allTracks = trackInPlaylistDatabase.trackInPlaylistDao?.getAll()
+                ?.map { DatabaseMapper.mapFromPlaylist(it) }
+            ids.forEach { id ->
+                allTracks?.find { it.trackId.toString() == id }?.let { tracks.add(it) }
+            }
+        }
+        return tracks
+    }
+
 
     companion object {
         const val DIRECTORY = "playlist"

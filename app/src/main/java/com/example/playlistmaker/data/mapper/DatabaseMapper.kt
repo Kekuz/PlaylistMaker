@@ -81,6 +81,20 @@ object DatabaseMapper {
             )
         }
 
+    fun mapNullable(playlistDatabaseEntity: PlaylistDatabaseEntity?): Playlist? =
+        with(playlistDatabaseEntity) {
+            return if (this != null) {
+                Playlist(
+                    id = id,
+                    name = name,
+                    description = description,
+                    pathToCover = pathToCover,
+                    trackIdsList = trackIdsList,
+                    tracksCount = tracksCount,
+                )
+            } else null
+        }
+
     fun mapToPlaylist(track: Track): TrackInPlaylistDatabaseEntity = with(track) {
         return TrackInPlaylistDatabaseEntity(
             id = trackId,
@@ -95,6 +109,23 @@ object DatabaseMapper {
             primaryGenreName = primaryGenreName,
             country = country,
             previewUrl = previewUrl
+        )
+    }
+
+    fun mapFromPlaylist(track: TrackInPlaylistDatabaseEntity): Track= with(track) {
+        return Track(
+            trackName = trackName,
+            artistName = artistName,
+            trackTime = trackTime,
+            artworkUrl100 = artworkUrl100,
+            artworkUrl512 = artworkUrl512,
+            trackId = id,
+            collectionName = collectionName,
+            releaseYear = releaseYear,
+            primaryGenreName = primaryGenreName,
+            country = country,
+            timeCreated = timeCreated,
+            previewUrl = previewUrl,
         )
     }
 }
