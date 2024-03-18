@@ -9,9 +9,4 @@ sealed interface PlaylistViewState {
         val tracks: List<Track>,
     ) : PlaylistViewState
 
-    data class BottomViewContent(
-        val tracks: List<Track>
-    ) : PlaylistViewState
-
-
 }

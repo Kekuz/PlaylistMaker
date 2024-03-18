@@ -26,11 +26,7 @@ class FavoritesViewModel(
 
     fun showFavorites() {
         viewModelScope.launch {
-            favoritesInteractor.getFavorites().flowOn(Dispatchers.IO).map { list ->
-                list.map { track ->
-                    track.apply { isFavorite = true }
-                }
-            }.collect {
+            favoritesInteractor.getFavorites().collect {
                 if (it.isEmpty()) {
                     stateLiveData.postValue(FavoritesState.Empty)
                 } else {
