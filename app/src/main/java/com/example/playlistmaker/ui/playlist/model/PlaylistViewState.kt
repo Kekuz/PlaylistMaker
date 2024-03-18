@@ -11,5 +11,6 @@ sealed interface PlaylistViewState {
 
     data class PlaylistContentDeleteTrack(
         val track: Track,
+        val tracksCount: Int,
     ) : PlaylistViewState
 }

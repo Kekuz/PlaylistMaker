@@ -43,7 +43,7 @@
     </style>
 
     <style name="player_toolbar_style">
-        <item name="android:navigationIcon">@drawable/back_arrow_24</item>
+        <item name="navigationIcon">@drawable/back_arrow_24</item>
         <item name="android:titleTextAppearance">@style/title_text_style</item>
     </style>
 

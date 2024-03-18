@@ -57,12 +57,17 @@ class PlaylistViewModel(
 
     fun deleteTrack(track: Track) {
         viewModelScope.launch {
-
             playlist?.let {
                 playlistRepository.deleteTrackFromPlaylist(track.trackId.toString(), it)
                 tracks.remove(track)
-                stateLiveData.postValue(PlaylistViewState.PlaylistContentDeleteTrack(track))
+                stateLiveData.postValue(
+                    PlaylistViewState.PlaylistContentDeleteTrack(
+                        track,
+                        playlist!!.tracksCount - 1
+                    )
+                )
             }
+            playlist = playlistRepository.getPlaylistById(id)
         }
     }
 

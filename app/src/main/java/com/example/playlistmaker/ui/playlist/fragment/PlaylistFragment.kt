@@ -90,22 +90,30 @@ class PlaylistFragment : Fragment() {
                 state.tracks
             )
 
-            is PlaylistViewState.PlaylistContentDeleteTrack -> showBottomViewContentAfterDeleting(state.track)
+            is PlaylistViewState.PlaylistContentDeleteTrack -> showBottomViewContentAfterDeleting(
+                state.track,
+                state.tracksCount
+            )
         }
     }
 
     private fun showBottomViewContent(tracks: List<Track>) {
+        viewModel.calculateBottomSheetHeight(binding)
+        bottomSheetPickHeight()
+
         tracksAdapter.clearTracks()
         Log.e("Tracks", tracks.toString())
         tracksAdapter.addTracks(tracks)
         tracksAdapter.notifyDataSetChanged()
     }
 
-    private fun showBottomViewContentAfterDeleting(track: Track) {
+    private fun showBottomViewContentAfterDeleting(track: Track, tracksCount: Int) {
         val deletedTrackIndex = tracksAdapter.removeTrack(track)
         Log.e("Tracks deleted", track.toString())
         tracksAdapter.notifyItemRemoved(deletedTrackIndex)
         tracksAdapter.notifyItemRangeChanged(deletedTrackIndex, tracksAdapter.itemCount)
+
+        bindDurationAndTrackCount(tracksCount)
     }
 
     private fun showPlaylistContent(playlist: Playlist, tracks: List<Track>) = with(binding) {
@@ -119,6 +127,12 @@ class PlaylistFragment : Fragment() {
             tvPlaylistDescription.isVisible = false
         }
 
+        bindDurationAndTrackCount(playlist.tracksCount)
+
+        showBottomViewContent(tracks)
+    }
+
+    private fun bindDurationAndTrackCount(tracksCount: Int) = with(binding) {
         val totalTime = viewModel.countPlaylistMinutes()
         tvPlaylistDuration.text = requireContext().resources.getQuantityString(
             R.plurals.plurals_minutes,
@@ -127,13 +141,8 @@ class PlaylistFragment : Fragment() {
         )
 
         tvPlaylistTrackCount.text = requireContext().resources.getQuantityString(
-            R.plurals.plurals_track, playlist.tracksCount, playlist.tracksCount
+            R.plurals.plurals_track, tracksCount, tracksCount
         )
-
-        viewModel.calculateBottomSheetHeight(this)
-        bottomSheetPickHeight()
-
-        showBottomViewContent(tracks)
     }
 
     private fun bottomSheetPickHeight() {

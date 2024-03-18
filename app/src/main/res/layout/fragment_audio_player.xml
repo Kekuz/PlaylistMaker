@@ -41,7 +41,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.955" />
 
-        <Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/audio_player_tool_bar"
             style="@style/player_toolbar_style"
             android:layout_width="match_parent"
@@ -92,7 +92,7 @@
             android:layout_width="@dimen/audio_little_button"
             android:layout_height="@dimen/audio_little_button"
             android:layout_marginBottom="54dp"
-            android:background="@drawable/audio_player_circle_button_shape"
+            android:background="@color/transparent"
             android:src="@drawable/audio_player_playlist_button"
             app:layout_constraintBottom_toTopOf="@+id/track_time_tv"
             app:layout_constraintEnd_toStartOf="@id/playButton"
@@ -104,7 +104,7 @@
             android:layout_width="@dimen/audio_big_button"
             android:layout_height="@dimen/audio_big_button"
             android:layout_marginTop="-24dp"
-            android:background="@drawable/audio_player_circle_button_shape"
+            android:background="@color/transparent"
             android:src="@drawable/audio_player_play_button"
             app:layout_constraintEnd_toStartOf="@id/likeButton"
             app:layout_constraintStart_toEndOf="@id/playlistButton"
@@ -114,7 +114,7 @@
             android:id="@+id/likeButton"
             android:layout_width="@dimen/audio_little_button"
             android:layout_height="@dimen/audio_little_button"
-            android:background="@drawable/audio_player_circle_button_shape"
+            android:background="@color/transparent"
             android:src="@drawable/audio_player_like_button"
             app:layout_constraintBottom_toBottomOf="@id/playlistButton"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -268,11 +268,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View android:id="@+id/overlay"
+    <View
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
@@ -282,7 +283,8 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="505dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:visibility="gone">
 
         <View
             android:layout_width="50dp"
