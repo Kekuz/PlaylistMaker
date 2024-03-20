@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
-import android.provider.ContactsContract.Data
 import androidx.core.net.toUri
 import com.example.playlistmaker.data.mapper.DatabaseMapper
 import com.example.playlistmaker.data.playlist.database.PlaylistDatabase
@@ -26,6 +25,10 @@ class PlaylistRepositoryImpl(
         playlistDatabase.playlistDao?.insert(DatabaseMapper.map(playlist))
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist): Unit = withContext(Dispatchers.IO) {
+        playlistDatabase.playlistDao?.insert(DatabaseMapper.mapPlaylistWithId(playlist))
+    }
+
     override suspend fun getPlaylists(): List<Playlist> = withContext(Dispatchers.IO) {
         return@withContext playlistDatabase.playlistDao?.getAll()?.map { DatabaseMapper.map(it) }
             ?: emptyList()
@@ -35,10 +38,10 @@ class PlaylistRepositoryImpl(
         return@withContext DatabaseMapper.mapNullable(playlistDatabase.playlistDao?.getById(id))
     }
 
-    override fun getImageFromPrivateStorage(fileName: String): String {
+    override fun getImageFromPrivateStorage(fileName: String?): String {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), DIRECTORY)
-        val file = File(filePath, "$fileName.jpg")
-        return file.toUri().toString()
+        val file = fileName?.let { File(filePath, it) }
+        return file?.toUri().toString()
     }
 
     override fun saveImageToPrivateStorage(uri: String, fileName: String) {
@@ -93,7 +96,7 @@ class PlaylistRepositoryImpl(
     override suspend fun deletePlaylist(playlist: Playlist) =
         withContext(Dispatchers.IO) {
             playlistDatabase.playlistDao?.delete(
-                DatabaseMapper.mapPlaylistToDelete(
+                DatabaseMapper.mapPlaylistWithId(
                     playlist,
                 )
             )

@@ -6,7 +6,7 @@ import com.example.playlistmaker.domain.playlist.api.repository.PlaylistReposito
 import com.example.playlistmaker.domain.model.Playlist
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(
+open class NewPlaylistViewModel(
     private val playlistRepository: PlaylistRepository,
 ) : ViewModel() {
     fun createPlaylist(playlist: Playlist) {

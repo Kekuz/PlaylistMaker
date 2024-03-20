@@ -24,7 +24,7 @@ class PlaylistsViewHolder(
             model.tracksCount
         )
         Glide.with(itemView)
-            .load(File(playlistRepository.getImageFromPrivateStorage(model.name).toUri().path))
+            .load(File(playlistRepository.getImageFromPrivateStorage(model.pathToCover).toUri().path))
             .placeholder(R.drawable.track_placeholder)
             .centerCrop()
             .into(picture)

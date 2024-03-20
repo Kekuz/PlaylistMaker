@@ -1,7 +1,6 @@
 package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.data.favorites.database.model.TrackDatabaseEntity
-import com.example.playlistmaker.data.playlist.database.TrackInPlaylistDatabase
 import com.example.playlistmaker.data.playlist.database.model.PlaylistDatabaseEntity
 import com.example.playlistmaker.data.playlist.database.model.TrackInPlaylistDatabaseEntity
 import com.example.playlistmaker.domain.model.Playlist
@@ -53,7 +52,7 @@ object DatabaseMapper {
         )
     }
 
-    fun mapPlaylistToDelete(playlist: Playlist): PlaylistDatabaseEntity = with(playlist) {
+    fun mapPlaylistWithId(playlist: Playlist): PlaylistDatabaseEntity = with(playlist) {
         return PlaylistDatabaseEntity(
             id = id,
             name = name,

@@ -45,6 +45,7 @@
     <string name="finish">Завершить</string>
     <string name="playlist">Плейлист</string>
     <string name="created_">создан.</string>
+    <string name="saved_">сохранен.</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
 
     <string name="added_to_playlist">Добавлено в плейлист</string>
@@ -77,4 +78,7 @@
     <string name="share">Поделиться</string>
     <string name="edit_info">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
+
 </resources>

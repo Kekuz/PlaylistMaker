@@ -20,6 +20,7 @@ import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.fragment.AudioPlayerFragment
+import com.example.playlistmaker.ui.edit_playlist.fragment.EditPlaylistFragment
 import com.example.playlistmaker.ui.playlist.model.PlaylistViewState
 import com.example.playlistmaker.ui.playlist.recycler.BottomSheetPlaylistAdapter
 import com.example.playlistmaker.ui.playlist.view_model.PlaylistViewModel
@@ -97,6 +98,15 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getPlaylist()
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            binding.overlay.isVisible = true
+            binding.overlay.alpha = 1f
+        }
+    }
+
     private fun render(state: PlaylistViewState) {
         when (state) {
             is PlaylistViewState.PlaylistContent -> showPlaylistContent(
@@ -141,6 +151,7 @@ class PlaylistFragment : Fragment() {
         tvPlaylistNameBottomSheet.text = playlist.name
         if (playlist.description != "") {
             tvPlaylistDescription.text = playlist.description
+            tvPlaylistDescription.isVisible = true
         } else {
             tvPlaylistDescription.isVisible = false
         }
@@ -229,7 +240,10 @@ class PlaylistFragment : Fragment() {
         }
 
         tvEditInfo.setOnClickListener {
-            //TODO Дописать коду
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_editPlaylistFragment,
+                EditPlaylistFragment.createArgs(viewModel.getTrackId())
+            )
         }
 
         tvDeletePlaylist.setOnClickListener {
@@ -241,7 +255,6 @@ class PlaylistFragment : Fragment() {
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                // newState — новое состояние BottomSheet
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         overlay.isVisible = false

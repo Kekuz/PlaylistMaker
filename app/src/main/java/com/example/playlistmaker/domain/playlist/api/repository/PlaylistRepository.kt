@@ -6,11 +6,13 @@ import com.example.playlistmaker.domain.model.Track
 interface PlaylistRepository {
     suspend fun savePlaylist(playlist: Playlist)
 
+    suspend fun updatePlaylist(playlist: Playlist)
+
     suspend fun getPlaylists(): List<Playlist>
 
     suspend fun getPlaylistById(id: Int): Playlist?
 
-    fun getImageFromPrivateStorage(fileName: String): String
+    fun getImageFromPrivateStorage(fileName: String?): String
 
     fun saveImageToPrivateStorage(uri: String, fileName: String)
 

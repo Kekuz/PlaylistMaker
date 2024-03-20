@@ -33,15 +33,12 @@ class PlaylistViewModel(
     private val tracks = mutableListOf<Track>()
     var bottomSheetHeight: Int? = null
 
-    init {
-        getPlaylist()
-    }
-
     fun clickDebounce(): Boolean = Debounce().clickDebounce()
 
-    private fun getPlaylist() {
+    fun getPlaylist() {
         viewModelScope.launch {
             playlist = playlistRepository.getPlaylistById(id)
+            tracks.clear()
             tracks.addAll(
                 playlistRepository.getTracksFromPlaylistByIds(
                     playlist?.trackIdsList ?: emptyList()
@@ -81,6 +78,10 @@ class PlaylistViewModel(
         return playlist?.tracksCount ?: 0
     }
 
+    fun getTrackId(): Int {
+        return playlist?.id ?: -1
+    }
+
     fun countPlaylistMinutes(): Int {
         val secondsSum =
             tracks.sumOf {
@@ -107,7 +108,7 @@ class PlaylistViewModel(
 
     fun getFileImageFromStorage(): File {
         return File(
-            playlistRepository.getImageFromPrivateStorage(playlist?.name ?: "").toUri().path
+            playlistRepository.getImageFromPrivateStorage(playlist?.pathToCover ?: "").toUri().path
         )
     }
 
