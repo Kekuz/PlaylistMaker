@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
@@ -23,20 +21,20 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.UUID
 
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected open val binding get() = _binding!!
 
 
-    private val pickMedia =
+    protected val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 view?.let {
@@ -60,9 +58,9 @@ class NewPlaylistFragment : Fragment() {
         requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     }
 
-    private var uri: Uri? = null
+    protected var uri: Uri? = null
 
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    protected open val viewModel by viewModel<NewPlaylistViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +93,7 @@ class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun bindOnClick(view: View) = with(binding) {
+    protected open fun bindOnClick(view: View) = with(binding) {
         toolBar.setNavigationOnClickListener {
             showDialogOrNavigateBack()
         }
@@ -105,17 +103,18 @@ class NewPlaylistFragment : Fragment() {
         }
 
         btnCreate.setOnClickListener {
-            uri?.let { viewModel.saveImage(it.toString(), binding.name.text.toString()) }
+            val pictureName = UUID.randomUUID().toString()
+            uri?.let { viewModel.saveImage(it.toString(), pictureName) }
             viewModel.createPlaylist(
                 Playlist(
-                    name = binding.name.text.toString(),
-                    description = binding.description.text.toString(),
-                    pathToCover = "${binding.name.text.toString()}.jpg"
+                    name = name.text.toString(),
+                    description = description.text.toString(),
+                    pathToCover = "$pictureName.jpg"
                 )
             )
 
             findNavController().navigateUp()
-            makeSnackbar(view, binding.name.text.toString()).show()
+            makeSnackbar(view, name.text.toString()).show()
 
         }
     }
@@ -128,25 +127,22 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    @SuppressLint("RestrictedApi")
     private fun makeSnackbar(view: View, trackName: String): Snackbar {
-        val customSnackbar = Snackbar.make(
+        return Snackbar.make(
             ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
-            "",
+            getString(R.string.playlist) + " $trackName " + getString(R.string.created_),
             Snackbar.LENGTH_LONG
         )
-        val layout = customSnackbar.view as Snackbar.SnackbarLayout
-        val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
-
-        layout.addView(bind.root, 0)
-        bind.sbText.text =
-            getString(R.string.playlist) + " $trackName " + getString(R.string.created_)
-        return customSnackbar
     }
 
     private fun makeDialog(): MaterialAlertDialogBuilder {
-        return MaterialAlertDialogBuilder(requireContext())
+        return MaterialAlertDialogBuilder(
+            ContextThemeWrapper(
+                requireContext(),
+                R.style.DialogTheme
+            )
+        )
             .setTitle(getString(R.string.end_playlist_creation_))
             .setMessage(getString(R.string.all_unsaved_picks_lost))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->

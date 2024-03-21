@@ -20,10 +20,13 @@ class PlaylistRepositoryImpl(
     private val playlistDatabase: PlaylistDatabase,
     private val trackInPlaylistDatabase: TrackInPlaylistDatabase,
     private val context: Context
-) :
-    PlaylistRepository {
+) : PlaylistRepository {
     override suspend fun savePlaylist(playlist: Playlist): Unit = withContext(Dispatchers.IO) {
         playlistDatabase.playlistDao?.insert(DatabaseMapper.map(playlist))
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist): Unit = withContext(Dispatchers.IO) {
+        playlistDatabase.playlistDao?.insert(DatabaseMapper.mapPlaylistWithId(playlist))
     }
 
     override suspend fun getPlaylists(): List<Playlist> = withContext(Dispatchers.IO) {
@@ -31,10 +34,14 @@ class PlaylistRepositoryImpl(
             ?: emptyList()
     }
 
-    override fun getImageFromPrivateStorage(fileName: String): String {
+    override suspend fun getPlaylistById(id: Int): Playlist? = withContext(Dispatchers.IO) {
+        return@withContext DatabaseMapper.mapNullable(playlistDatabase.playlistDao?.getById(id))
+    }
+
+    override fun getImageFromPrivateStorage(fileName: String?): String {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), DIRECTORY)
-        val file = File(filePath, "$fileName.jpg")
-        return file.toUri().toString()
+        val file = fileName?.let { File(filePath, it) }
+        return file?.toUri().toString()
     }
 
     override fun saveImageToPrivateStorage(uri: String, fileName: String) {
@@ -61,6 +68,61 @@ class PlaylistRepositoryImpl(
                 )
             )
         }
+
+    override suspend fun getTracksFromPlaylistByIds(ids: List<String>): List<Track> {
+        val tracks = mutableListOf<Track>()
+        withContext(Dispatchers.IO) {
+            val allTracks = trackInPlaylistDatabase.trackInPlaylistDao?.getAll()
+                ?.map { DatabaseMapper.mapFromPlaylist(it) }
+            ids.forEach { id ->
+                allTracks?.find { it.trackId.toString() == id }?.let { tracks.add(it) }
+            }
+        }
+        return tracks
+    }
+
+    override suspend fun deleteTrackFromPlaylist(id: String, playlist: Playlist): Unit =
+        withContext(Dispatchers.IO) {
+            playlistDatabase.playlistDao?.insert(
+                DatabaseMapper.mapAndDeleteTrackFromPlaylist(
+                    id,
+                    playlist,
+                )
+            )
+
+            deleteFromTotalPlaylist(id)
+        }
+
+    override suspend fun deletePlaylist(playlist: Playlist) =
+        withContext(Dispatchers.IO) {
+            playlistDatabase.playlistDao?.delete(
+                DatabaseMapper.mapPlaylistWithId(
+                    playlist,
+                )
+            )
+
+            playlist.trackIdsList.forEach {
+                deleteFromTotalPlaylist(it)
+            }
+        }
+
+
+    private suspend fun deleteFromTotalPlaylist(id: String) {
+        val totalPlaylists = getPlaylists()
+        var matchesNumber = 0
+        totalPlaylists.forEach {
+            if (it.trackIdsList.contains(id)) matchesNumber++
+        }
+        if (matchesNumber == 0) {
+            val deletedTrack = getTracksFromPlaylistByIds(listOf(id))[0]
+            trackInPlaylistDatabase.trackInPlaylistDao?.delete(
+                DatabaseMapper.mapToPlaylist(
+                    deletedTrack
+                )
+            )
+        }
+    }
+
 
     companion object {
         const val DIRECTORY = "playlist"

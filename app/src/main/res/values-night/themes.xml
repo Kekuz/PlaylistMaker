@@ -11,9 +11,26 @@
 
     <style name="CustomSnackbarTheme">
         <item name="snackbarStyle">@style/MySnackBarStyle</item>
+        <item name="snackbarTextViewStyle">@style/snackbar_text</item>
     </style>
 
     <style name="MySnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:background">@color/yp_white</item>
+    </style>
+
+    <style name="snackbar_text" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/little_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:layout_marginVertical">8dp</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>

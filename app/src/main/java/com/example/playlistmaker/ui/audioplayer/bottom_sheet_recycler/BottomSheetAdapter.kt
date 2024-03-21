@@ -4,12 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.BottomSheetPlaylistViewBinding
-import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
 
 class BottomSheetAdapter(
-    private val playlistRepository: PlaylistRepository,
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
     private val onClick: (Playlist) -> Unit,
 ) : RecyclerView.Adapter<BottomSheetViewHolder>() {
 
@@ -19,7 +18,7 @@ class BottomSheetAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = BottomSheetPlaylistViewBinding.inflate(inflater, parent, false)
-        return BottomSheetViewHolder(binding, playlistRepository)
+        return BottomSheetViewHolder(binding, playlistCoverInteractor)
     }
 
     override fun onBindViewHolder(holder: BottomSheetViewHolder, position: Int) {

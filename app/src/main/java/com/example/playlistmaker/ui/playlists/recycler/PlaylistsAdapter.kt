@@ -5,25 +5,25 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
 
-class PlaylistAdapter(
-    private val playlistRepository: PlaylistRepository
-    /*private val onClick: (Playlist) -> Unit,*/
+class PlaylistsAdapter(
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
+    private val onClick: (Playlist) -> Unit,
 ) :
-    RecyclerView.Adapter<PlaylistViewHolder>() {
+    RecyclerView.Adapter<PlaylistsViewHolder>() {
 
     private val playlists = mutableListOf<Playlist>()
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = PlaylistViewBinding.inflate(inflater, parent, false)
-        return PlaylistViewHolder(binding, playlistRepository)
+        return PlaylistsViewHolder(binding, playlistCoverInteractor)
     }
 
-    override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(playlists[position] /*onClick*/)
+    override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
+        holder.bind(playlists[position], onClick)
     }
 
     override fun getItemCount(): Int {
