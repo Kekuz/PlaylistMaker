@@ -11,7 +11,8 @@ import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.player.api.interactor.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.models.PlayerStates
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistInteractor
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerBottomSheetState
 import com.example.playlistmaker.ui.audioplayer.models.AudioPlayerViewState
 import com.example.playlistmaker.ui.audioplayer.models.PlayerView
@@ -21,7 +22,8 @@ class AudioPlayerViewModel(
     private val track: Track,
     private val mediaPlayerInteractor: MediaPlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor,
-    private val playlistRepository: PlaylistRepository,
+    private val playlistInteractor: PlaylistInteractor,
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -52,7 +54,7 @@ class AudioPlayerViewModel(
             )
         } else {
             viewModelScope.launch {
-                playlistRepository.addTrackToPlaylist(track, playlist)
+                playlistInteractor.addTrackToPlaylist(track, playlist)
             }
             stateBottomSheetLiveData.postValue(
                 AudioPlayerBottomSheetState.TrackAdded(
@@ -64,7 +66,7 @@ class AudioPlayerViewModel(
 
     fun getPlaylists() {
         viewModelScope.launch {
-            val playlists = playlistRepository.getPlaylists()
+            val playlists = playlistInteractor.getPlaylists()
             if (playlists.isEmpty()) {
                 stateBottomSheetLiveData.postValue(AudioPlayerBottomSheetState.EmptyPlaylists)
             } else {
@@ -77,8 +79,8 @@ class AudioPlayerViewModel(
         }
     }
 
-    fun getCoverRepository(): PlaylistRepository {
-        return playlistRepository
+    fun getCoverInteractor(): PlaylistCoverInteractor {
+        return playlistCoverInteractor
     }
 
     fun onFavoriteClick() {

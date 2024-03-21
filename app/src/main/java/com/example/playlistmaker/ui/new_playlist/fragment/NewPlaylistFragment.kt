@@ -21,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -128,21 +127,13 @@ open class NewPlaylistFragment : Fragment() {
         }
     }
 
-    @SuppressLint("RestrictedApi")
     private fun makeSnackbar(view: View, trackName: String): Snackbar {
-        val customSnackbar = Snackbar.make(
+        return Snackbar.make(
             ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
-            "",
+            getString(R.string.playlist) + " $trackName " + getString(R.string.created_),
             Snackbar.LENGTH_LONG
         )
-        val layout = customSnackbar.view as Snackbar.SnackbarLayout
-        val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
-
-        layout.addView(bind.root, 0)
-        bind.sbText.text =
-            getString(R.string.playlist) + " $trackName " + getString(R.string.created_)
-        return customSnackbar
     }
 
     private fun makeDialog(): MaterialAlertDialogBuilder {

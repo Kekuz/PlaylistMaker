@@ -6,12 +6,12 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.BottomSheetPlaylistViewBinding
 import com.example.playlistmaker.domain.model.Playlist
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
 import java.io.File
 
 class BottomSheetViewHolder(
     private val binding: BottomSheetPlaylistViewBinding,
-    private val playlistRepository: PlaylistRepository,
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: Playlist, onClick: (Playlist) -> Unit) = with(binding) {
@@ -23,7 +23,7 @@ class BottomSheetViewHolder(
         )
 
         Glide.with(itemView)
-            .load(File(playlistRepository.getImageFromPrivateStorage(model.pathToCover).toUri().path))
+            .load(File(playlistCoverInteractor.getImageFromPrivateStorage(model.pathToCover).toUri().path))
             .placeholder(R.drawable.track_placeholder).error(R.drawable.track_placeholder)
             .centerCrop().into(ivPlaylist)
 

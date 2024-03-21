@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackViewBinding
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
 
 class BottomSheetPlaylistAdapter(
     private val onClick: (Track) -> Unit,

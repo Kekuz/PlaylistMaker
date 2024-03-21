@@ -51,14 +51,4 @@
         <item name="itemIconTint">@color/bottom_navigation_items_color</item>
     </style>
 
-    <style name="snackbar">
-        <item name="android:background">@color/yp_white</item>
-    </style>
-
-    <style name="snackbar_text_style">
-        <item name="android:textColor">@color/yp_black</item>
-        <item name="android:textSize">@dimen/little_text_size</item>
-        <item name="android:fontFamily">@font/ys_display_regular</item>
-    </style>
-
 </resources>

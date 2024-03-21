@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
-import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.audioplayer.bottom_sheet_recycler.BottomSheetAdapter
@@ -80,7 +79,7 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playlistAdapter = BottomSheetAdapter(viewModel.getCoverRepository(), onClick)
+        playlistAdapter = BottomSheetAdapter(viewModel.getCoverInteractor(), onClick)
         binding.rvPlaylists.adapter = playlistAdapter
 
         viewModel.loadView()
@@ -258,25 +257,18 @@ class AudioPlayerFragment : Fragment() {
             playButton.setImageResource(R.drawable.audio_player_play_button)
     }
 
-    @SuppressLint("RestrictedApi")
+
     private fun makeSnackbar(view: View, playlistName: String, isExist: Boolean): Snackbar {
-        val customSnackbar = Snackbar.make(
+        return Snackbar.make(
             ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
-            "",
+            if (isExist) {
+                "${getString(R.string.already_added_to_playlist)} $playlistName"
+            } else {
+                "${getString(R.string.added_to_playlist)} $playlistName"
+            },
             Snackbar.LENGTH_LONG
         )
-        val layout = customSnackbar.view as Snackbar.SnackbarLayout
-        val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
-
-        layout.addView(bind.root, 0)
-        if (isExist) {
-            bind.sbText.text = "${getString(R.string.already_added_to_playlist)} $playlistName"
-        } else {
-            bind.sbText.text = "${getString(R.string.added_to_playlist)} $playlistName"
-        }
-
-        return customSnackbar
     }
 
     companion object {

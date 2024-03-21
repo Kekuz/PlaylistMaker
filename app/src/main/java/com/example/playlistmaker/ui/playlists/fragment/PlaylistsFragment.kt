@@ -42,7 +42,7 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playlistsAdapter = PlaylistsAdapter(viewModel.getCoverRepository(), onClick)
+        playlistsAdapter = PlaylistsAdapter(viewModel.getCoverInteractor(), onClick)
 
         binding.playlistRecycler.adapter = playlistsAdapter
 

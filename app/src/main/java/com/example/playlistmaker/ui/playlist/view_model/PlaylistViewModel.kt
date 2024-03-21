@@ -12,16 +12,21 @@ import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.domain.favorites.api.interactor.FavoritesInteractor
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistDeletingInteractor
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistInteractor
 import com.example.playlistmaker.ui.playlist.model.PlaylistViewState
 import com.example.playlistmaker.ui.util.Debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class PlaylistViewModel(
     private val id: Int,
-    private val playlistRepository: PlaylistRepository,
+    private val playlistInteractor: PlaylistInteractor,
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
+    private val playlistDeletingInteractor: PlaylistDeletingInteractor,
     private val favoritesInteractor: FavoritesInteractor,
 ) : ViewModel() {
 
@@ -37,10 +42,10 @@ class PlaylistViewModel(
 
     fun getPlaylist() {
         viewModelScope.launch {
-            playlist = playlistRepository.getPlaylistById(id)
+            playlist = playlistInteractor.getPlaylistById(id)
             tracks.clear()
             tracks.addAll(
-                playlistRepository.getTracksFromPlaylistByIds(
+                playlistInteractor.getTracksFromPlaylistByIds(
                     playlist?.trackIdsList ?: emptyList()
                 )
             )
@@ -55,7 +60,7 @@ class PlaylistViewModel(
     fun deleteTrack(track: Track) {
         viewModelScope.launch {
             playlist?.let {
-                playlistRepository.deleteTrackFromPlaylist(track.trackId.toString(), it)
+                playlistDeletingInteractor.deleteTrackFromPlaylist(track.trackId.toString(), it)
                 tracks.remove(track)
                 stateLiveData.postValue(
                     PlaylistViewState.PlaylistContentDeleteTrack(
@@ -64,13 +69,13 @@ class PlaylistViewModel(
                     )
                 )
             }
-            playlist = playlistRepository.getPlaylistById(id)
+            playlist = playlistInteractor.getPlaylistById(id)
         }
     }
 
     fun deletePlaylist() {
         viewModelScope.launch {
-            playlist?.let { playlistRepository.deletePlaylist(it) }
+            playlist?.let { playlistDeletingInteractor.deletePlaylist(it) }
         }
     }
 
@@ -82,6 +87,14 @@ class PlaylistViewModel(
         return playlist?.id ?: -1
     }
 
+    fun getCurrentPlaylist(): Playlist {
+        return playlist!!
+    }
+
+    fun getCurrentTracks(): List<Track> {
+        return tracks
+    }
+
     fun countPlaylistMinutes(): Int {
         val secondsSum =
             tracks.sumOf {
@@ -89,9 +102,10 @@ class PlaylistViewModel(
             }
         val minutesSum =
             tracks.sumOf {
-                it.trackTime.substring(0, it.trackTime.indexOf(":")).toInt() * 60
+                it.trackTime.substring(0, it.trackTime.indexOf(":"))
+                    .toInt() * TimeUnit.MINUTES.toSeconds(1).toInt()
             }
-        return (secondsSum + minutesSum) / 60
+        return (secondsSum + minutesSum) / TimeUnit.MINUTES.toSeconds(1).toInt()
     }
 
     private suspend fun markFavoriteTracks() {
@@ -108,7 +122,8 @@ class PlaylistViewModel(
 
     fun getFileImageFromStorage(): File {
         return File(
-            playlistRepository.getImageFromPrivateStorage(playlist?.pathToCover ?: "").toUri().path
+            playlistCoverInteractor.getImageFromPrivateStorage(playlist?.pathToCover ?: "")
+                .toUri().path
         )
     }
 

@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.model.Playlist
-import com.example.playlistmaker.domain.playlist.api.repository.PlaylistRepository
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistCoverInteractor
+import com.example.playlistmaker.domain.playlist.api.interactor.PlaylistInteractor
 import com.example.playlistmaker.ui.edit_playlist.model.EditPlaylistViewState
 import com.example.playlistmaker.ui.new_playlist.view_model.NewPlaylistViewModel
 import kotlinx.coroutines.launch
@@ -13,8 +14,9 @@ import java.io.File
 
 class EditPlaylistViewModel(
     private val id: Int,
-    private val playlistRepository: PlaylistRepository
-) : NewPlaylistViewModel(playlistRepository) {
+    private val playlistInteractor: PlaylistInteractor,
+    private val playlistCoverInteractor: PlaylistCoverInteractor,
+) : NewPlaylistViewModel(playlistInteractor, playlistCoverInteractor) {
 
     private val stateLiveData = MutableLiveData<EditPlaylistViewState>()
 
@@ -28,7 +30,7 @@ class EditPlaylistViewModel(
 
     private fun getPlaylist() {
         viewModelScope.launch {
-            playlist = playlistRepository.getPlaylistById(id)!!
+            playlist = playlistInteractor.getPlaylistById(id)!!
 
             playlist?.let {
                 stateLiveData.postValue(EditPlaylistViewState.Content(it))
@@ -42,7 +44,7 @@ class EditPlaylistViewModel(
         pathToCover: String? = null
     ) {
         viewModelScope.launch {
-            playlistRepository.updatePlaylist(
+            playlistInteractor.updatePlaylist(
                 if (pathToCover == null) {
                     playlist.copy(
                         name = name,
@@ -61,6 +63,6 @@ class EditPlaylistViewModel(
     }
 
     fun getCoverFile(): File =
-        File(playlistRepository.getImageFromPrivateStorage(playlist.pathToCover).toUri().path)
+        File(playlistCoverInteractor.getImageFromPrivateStorage(playlist.pathToCover).toUri().path)
 
 }

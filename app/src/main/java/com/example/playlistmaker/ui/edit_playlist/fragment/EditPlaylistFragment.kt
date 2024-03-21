@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.edit_playlist.fragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -10,7 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.SnackbarViewBinding
 import com.example.playlistmaker.domain.model.Playlist
 import com.example.playlistmaker.ui.edit_playlist.model.EditPlaylistViewState
 import com.example.playlistmaker.ui.edit_playlist.view_model.EditPlaylistViewModel
@@ -83,21 +81,14 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             .into(picture)
     }
 
-    @SuppressLint("RestrictedApi")
     private fun makeSnackbar(view: View, trackName: String): Snackbar {
-        val customSnackbar = Snackbar.make(
+
+        return Snackbar.make(
             ContextThemeWrapper(requireContext(), R.style.CustomSnackbarTheme),
             view,
-            "",
+            getString(R.string.playlist) + " $trackName " + getString(R.string.saved_),
             Snackbar.LENGTH_LONG
         )
-        val layout = customSnackbar.view as Snackbar.SnackbarLayout
-        val bind: SnackbarViewBinding = SnackbarViewBinding.inflate(layoutInflater)
-
-        layout.addView(bind.root, 0)
-        bind.sbText.text =
-            getString(R.string.playlist) + " $trackName " + getString(R.string.saved_)
-        return customSnackbar
     }
 
     companion object {
